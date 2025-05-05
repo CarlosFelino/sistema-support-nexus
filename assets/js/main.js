@@ -1,29 +1,48 @@
-// Simulação do login (tem que remover quando for fazer integração com back-end)
 document.addEventListener('DOMContentLoaded', () => {
-    // Menu hamburguer
-    const menuToggle = document.querySelector('.menu-toggle');
-    if (menuToggle) {
-        menuToggle.addEventListener('click', () => {
-            console.log('Menu lateral aberto'); // Implementar o sidebar
-        });
-    }
+    // Efeito de digitação no subtítulo
+    const subtitle = document.querySelector('.subtitle');
+    if (subtitle) {
+        const texts = [
+            "Sistema de gerenciamento de ordens de serviço",
+            "Suporte TI eficiente para professores",
+            "Fatec Carapicuíba - Sempre Conectados"
+        ];
+        let count = 0;
+        let index = 0;
+        let currentText = '';
+        let letter = '';
+        let isDeleting = false;
+        let typingSpeed = 100;
 
-    // Redirecionamento após login (exemplo)
-    const loginForm = document.querySelector('.auth-box form');
-    if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
+        function type() {
+            if (count === texts.length) count = 0;
+            currentText = texts[count];
             
-            if (email.includes('@fatec.sp.gov.br')) {
-                if (email.startsWith('suporte')) {
-                    window.location.href = 'admin/index-adm.html';
-                } else {
-                    window.location.href = 'professor/index-prof.html';
-                }
+            if (isDeleting) {
+                letter = currentText.slice(0, --index);
+                typingSpeed = 50;
             } else {
-                alert('Use seu email institucional (@fatec.sp.gov.br)');
+                letter = currentText.slice(0, ++index);
+                typingSpeed = 100;
             }
-        });
+
+            subtitle.textContent = letter;
+            
+            if (!isDeleting && letter.length === currentText.length) {
+                typingSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && letter.length === 0) {
+                isDeleting = false;
+                count++;
+                typingSpeed = 500;
+            }
+
+            setTimeout(type, typingSpeed);
+        }
+
+        setTimeout(type, 1000);
     }
+    // Transição suave ao carregar
+    document.body.classList.add('loaded');
 });
+
