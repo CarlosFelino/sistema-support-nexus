@@ -6,6 +6,7 @@
     --accent: #ff00e2;
     --text-light: #ffffff;
     --gradient: linear-gradient(90deg, #5604dd 0%, #ff66c4 100%);
+    --gradient2: linear-gradient(90deg, #ff66c4 0%, #5604dd 100%);
 }
 
 /* Reset Básico */
@@ -34,7 +35,7 @@ body {
 }
 
 .logo {
-    height: 40px;
+    height: 60px;
 }
 
 /* Hero Section */
@@ -67,7 +68,7 @@ body {
 
 .btn-login {
     display: inline-block;
-    padding: 1rem 2.5rem;
+    padding: 1rem 13rem;
     background: var(--gradient);
     color: #0f1819;
     font-weight: bold;
