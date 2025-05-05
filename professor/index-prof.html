@@ -3,30 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Nexus - Professor</title>
+    <title>Painel Professor - Support Nexus</title>
     <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/professor.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preload" href="../assets/images/logo.png" as="image">
+    <link rel="icon" href="../assets/images/logo.png" type="image/x-icon">
 </head>
 <body>
+    <!-- Navbar Fixo -->
     <nav class="navbar-system">
-        <button class="menu-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-        
-        <div class="logo-container">
-            <img src="../assets/images/logo.png" alt="Support Nexus" class="logo">
-        </div>
-        
-        <div class="user-profile">
-            <div class="user-info">
-                <span class="user-name">Professor</span>
-                <span class="user-email">professor@fatec.sp.gov.br</span>
+        <div class="nav-container">
+            <a href="index-prof.html" class="logo-link">
+                <img src="../assets/images/logo.png" alt="Support Nexus" class="logo">
+            </a>
+            <div class="user-profile">
+                <div class="user-info">
+                    <span class="user-name">Prof. Carlos</span>
+                    <span class="user-email">carlos@fatec.sp.gov.br</span>
+                </div>
+                <a href="perfil.html" class="user-avatar-link">
+                    <img src="../assets/images/default-avatar.png" alt="Professor" class="user-avatar">
+                </a>
             </div>
-            <img src="../assets/images/default-avatar.png" alt="Professor" class="user-avatar">
         </div>
     </nav>
 
-    <!-- Conteúdo do dashboard professor -->
-    <script src="../assets/js/main.js"></script>
+    <!-- Painel de Controle -->
+    <main class="dashboard">
+        <h1>Bem-vindo, Professor!</h1>
+        <p class="subtitle">Selecione uma opção abaixo</p>
+        
+        <div class="dashboard-grid">
+            <!-- Card Nova Ordem -->
+            <a href="nova-ordem.html" class="dashboard-card">
+                <div class="card-icon" style="background-color: #8906e620;">
+                    <i class="fas fa-plus-circle" style="color: #8906e6;"></i>
+                </div>
+                <h3>Criar Nova Ordem</h3>
+                <p>Registre um novo problema técnico</p>
+            </a>
+            
+            <!-- Card Minhas Ordens -->
+            <a href="minhas-ordens.html" class="dashboard-card">
+                <div class="card-icon" style="background-color: #050deb20;">
+                    <i class="fas fa-list" style="color: #050deb;"></i>
+                </div>
+                <h3>Minhas Ordens</h3>
+                <p>Visualize seu histórico</p>
+            </a>
+            
+            <!-- Card Acompanhar -->
+            <a href="minhas-ordens.html#andamento" class="dashboard-card">
+                <div class="card-icon" style="background-color: #ff00e220;">
+                    <i class="fas fa-tasks" style="color: #ff00e2;"></i>
+                </div>
+                <h3>Acompanhar Andamento</h3>
+                <p>Verifique o status</p>
+            </a>
+        </div>
+    </main>
+
+    <script src="../assets/js/professor.js"></script>
 </body>
 </html>

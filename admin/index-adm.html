@@ -3,30 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Nexus - Admin</title>
+    <title>Painel Admin - Support Nexus</title>
     <link rel="stylesheet" href="../assets/css/main.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/admin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preload" href="../assets/images/logo.png" as="image">
+    <link rel="icon" href="../assets/images/logo.png" type="image/x-icon">
 </head>
 <body>
-    <nav class="navbar-system">
-        <button class="menu-toggle">
-            <i class="fas fa-bars"></i>
-        </button>
-        
-        <div class="logo-container">
-            <img src="../assets/images/logo.png" alt="Support Nexus" class="logo">
+    <!-- Navbar Fixo -->
+<nav class="navbar-system">
+    <div class="nav-container">
+        <div class="nav-left">
+            <button class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <a href="index-adm.html" class="logo-link">
+                <img src="../assets/images/logo.png" alt="Support Nexus" class="logo">
+                <span class="logo-text">Support Nexus</span>
+            </a>
         </div>
         
         <div class="user-profile">
             <div class="user-info">
                 <span class="user-name">Admin</span>
-                <span class="user-email">suporte@fatec.sp.gov.br</span>
+                <span class="user-email">admin@fatec.sp.gov.br</span>
             </div>
-            <img src="../assets/images/default-avatar.png" alt="Admin" class="user-avatar">
+            <div class="user-avatar">
+                <img src="../assets/images/default-avatar.png" alt="Admin">
+            </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
-    <!-- Conteúdo do dashboard admin -->
-    <script src="../assets/js/main.js"></script>
+    <!-- Painel de Controle -->
+    <main class="admin-dashboard">
+        <div class="dashboard-header">
+            <h1>Painel Administrativo</h1>
+            <p class="subtitle">Bem-vindo ao sistema de gerenciamento</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Card Ordens de Serviço -->
+            <a href="ordens.html" class="dashboard-card">
+                <div class="card-icon" style="background-color: rgba(122, 4, 235, 0.1);">
+                    <i class="fas fa-tasks" style="color: #7a04eb;"></i>
+                </div>
+                <h3>Ordens de Serviço</h3>
+                <p>Visualize e gerencie todas as OS</p>
+                <span class="card-badge">12 pendentes</span>
+            </a>
+
+            <!-- Card Criar OS -->
+            <a href="../professor/nova-ordem.html" class="dashboard-card">
+                <div class="card-icon" style="background-color: rgba(255, 0, 226, 0.1);">
+                    <i class="fas fa-plus-circle" style="color: #ff00e2;"></i>
+                </div>
+                <h3>Criar Ordem</h3>
+                <p>Registre uma nova ordem de serviço</p>
+            </a>
+
+            <!-- Card Usuários -->
+            <a href="usuarios.html" class="dashboard-card">
+                <div class="card-icon" style="background-color: rgba(16, 23, 40, 0.1);">
+                    <i class="fas fa-users" style="color: #101728;"></i>
+                </div>
+                <h3>Gerenciar Usuários</h3>
+                <p>Cadastre novos professores ou técnicos</p>
+            </a>
+
+            <!-- Card Patrimônio -->
+            <a href="patrimonio.html" class="dashboard-card">
+                <div class="card-icon" style="background-color: rgba(10, 16, 31, 0.1);">
+                    <i class="fas fa-laptop-house" style="color: #0a101f;"></i>
+                </div>
+                <h3>Mapa de Patrimônio</h3>
+                <p>Controle de equipamentos por sala</p>
+            </a>
+
+            <!-- Card Relatórios -->
+            <a href="relatorios.html" class="dashboard-card">
+                <div class="card-icon" style="background-color: rgba(122, 4, 235, 0.1);">
+                    <i class="fas fa-chart-bar" style="color: #7a04eb;"></i>
+                </div>
+                <h3>Relatórios</h3>
+                <p>Dados e estatísticas do sistema</p>
+            </a>
+
+            <!-- Card Configurações -->
+            <a href="configuracoes.html" class="dashboard-card">
+                <div class="card-icon" style="background-color: rgba(255, 0, 226, 0.1);">
+                    <i class="fas fa-cog" style="color: #ff00e2;"></i>
+                </div>
+                <h3>Configurações</h3>
+                <p>Personalize o sistema</p>
+            </a>
+        </div>
+    </main>
+
+    <script src="../assets/js/admin.js"></script>
 </body>
 </html>

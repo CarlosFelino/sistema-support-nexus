@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil - Support Nexus</title>
+    <link rel="stylesheet" href="../assets/css/professor.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preload" href="../assets/images/logo.png" as="image">
+    <link rel="icon" href="../assets/images/logo.png" type="image/x-icon">
+</head>
+<body>
+    <!-- Navbar Fixo -->
+    <nav class="navbar-system">
+        <div class="nav-container">
+            <a href="index-prof.html" class="logo-link">
+                <img src="../assets/images/logo.png" alt="Support Nexus" class="logo">
+            </a>
+            <div class="user-profile">
+                <div class="user-info">
+                    <span class="user-name">Prof. Carlos</span>
+                    <span class="user-email">carlos@fatec.sp.gov.br</span>
+                </div>
+                <a href="perfil.html" class="user-avatar-link">
+                    <img src="../assets/images/default-avatar.png" alt="Professor" class="user-avatar">
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="profile-container">
+        <div class="profile-header">
+            <a href="index-prof.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <h1>Meu Perfil</h1>
+        </div>
+
+        <div class="profile-card">
+            <!-- Seção Foto -->
+            <div class="profile-section">
+                <h2><i class="fas fa-user-circle"></i> Foto de Perfil</h2>
+                <div class="photo-upload">
+                    <img src="../assets/images/default-avatar.png" alt="Foto atual" id="profile-preview" class="profile-photo">
+                    <div class="upload-controls">
+                        <input type="file" id="photo-input" accept="image/*" style="display: none;">
+                        <button class="btn-upload" onclick="document.getElementById('photo-input').click()">
+                            <i class="fas fa-upload"></i> Alterar Foto
+                        </button>
+                        <small>Formatos: JPG, PNG (máx. 2MB)</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Seção Senha -->
+            <div class="profile-section">
+                <h2><i class="fas fa-lock"></i> Alterar Senha</h2>
+                <form class="password-form">
+                    <div class="form-group">
+                        <label for="current-password">Senha Atual</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock icon"></i>
+                            <input type="password" id="current-password" required>
+                            <button type="button" class="show-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="new-password">Nova Senha</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-key icon"></i>
+                            <input type="password" id="new-password" required>
+                            <button type="button" class="show-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <small>Mínimo 8 caracteres</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="confirm-password">Confirmar Nova Senha</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-key icon"></i>
+                            <input type="password" id="confirm-password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn-save">
+                            <i class="fas fa-save"></i> Salvar Alterações
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/profile.js"></script>
+</body>
+</html>

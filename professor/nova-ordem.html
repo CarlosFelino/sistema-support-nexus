@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nova Ordem - Support Nexus</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/professor.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preload" href="../assets/images/logo.png" as="image">
+    <link rel="icon" href="../assets/images/logo.png" type="image/x-icon">
+</head>
+<body>
+    <!-- Navbar Fixo -->
+    <nav class="navbar-system">
+        <div class="nav-container">
+            <a href="index-prof.html" class="logo-link">
+                <img src="../assets/images/logo.png" alt="Support Nexus" class="logo">
+            </a>
+            <div class="user-profile">
+                <div class="user-info">
+                    <span class="user-name">Prof. Carlos</span>
+                    <span class="user-email">carlos@fatec.sp.gov.br</span>
+                </div>
+                <a href="perfil.html" class="user-avatar-link">
+                    <img src="../assets/images/default-avatar.png" alt="Professor" class="user-avatar">
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Conteúdo Principal -->
+    <main class="order-container">
+        <div class="order-header">
+            <a href="index-prof.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Voltar
+            </a>
+            <h1>Criar Nova Ordem de Serviço</h1>
+        </div>
+
+        <form class="order-form">
+            <!-- Seção 1: Ambiente -->
+            <div class="form-section">
+                <h2 style="color: white;"><i class="fas fa-door-open"></i> Tipo de Ambiente</h2>
+                <div class="radio-options">
+                    <label class="radio-card">
+                        <input type="radio" name="environment" value="sala" checked>
+                        <div class="radio-content">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>Sala de Aula</span>
+                        </div>
+                    </label>
+                    <label class="radio-card">
+                        <input type="radio" name="environment" value="lab">
+                        <div class="radio-content">
+                            <i class="fas fa-laptop-code"></i>
+                            <span>Laboratório</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Seção 2: Sala/Lab -->
+            <div id="location-section">
+                <!-- Preenchido via JavaScript -->
+            </div>
+
+            <!-- Seção 3: Seleção de Equipamento (dinâmico) -->
+            <div id="equipment-section" style="display: none;">
+                <!-- Preenchido via JavaScript -->
+            </div>
+
+            <!-- Seção 4: Problemas (dinâmico) -->
+            <div id="problems-section" style="display: none;">
+                <!-- Preenchido via JavaScript -->
+            </div>
+
+            <!-- Seção 5: Anexos -->
+            <div class="form-group">
+                <label for="attachments">Anexar Imagens (Opcional)</label>
+                <input type="file" id="attachments" accept="image/*" multiple>
+                <small>Máx. 3 imagens (PNG/JPG, 2MB cada)</small>
+            </div>
+
+            <!-- Botão de Envio -->
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <i class="fas fa-paper-plane"></i> Enviar Ordem
+                </button>
+            </div>
+        </form>
+    </main>
+
+    <script src="../assets/js/professor.js"></script>
+</body>
+</html>

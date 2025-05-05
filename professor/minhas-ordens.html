@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Ordens - Support Nexus</title>
+    <link rel="stylesheet" href="../assets/css/professor.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preload" href="../assets/images/logo.png" as="image">
+    <link rel="icon" href="../assets/images/logo.png" type="image/x-icon">
+</head>
+<body>
+    <!-- Navbar (igual às outras páginas) -->
+    <nav class="navbar-system">
+        <div class="nav-container">
+            <a href="index-prof.html" class="logo-link">
+                <img src="../assets/images/logo.png" alt="Support Nexus" class="logo">
+            </a>
+            <div class="user-profile">
+                <div class="user-info">
+                    <span class="user-name">Prof. Carlos</span>
+                    <span class="user-email">carlos@fatec.sp.gov.br</span>
+                </div>
+                <img src="../assets/images/default-avatar.png" alt="Professor" class="user-avatar">
+            </div>
+        </div>
+    </nav>
+
+     <!-- Conteúdo Principal -->
+     <main class="orders-container">
+        <div class="orders-header">
+            <h1>Minhas Ordens de Serviço</h1>
+            
+            <!-- Filtro Simples -->
+            <div class="status-filter">
+                <select id="filter-status" class="filter-select">
+                    <option value="all">Todas as ordens</option>
+                    <option value="pending">Pendentes</option>
+                    <option value="in-progress">Em andamento</option>
+                    <option value="completed">Concluídas</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Lista de Ordens -->
+        <div class="orders-list" id="orders-list">
+            <!-- Ordem 1 -->
+            <div class="order-card pending">
+                <div class="order-meta">
+                    <span class="order-id">#OS-2023-001</span>
+                    <span class="order-date">15/10/2023</span>
+                    <span class="order-status pending">Pendente</span>
+                </div>
+                <div class="order-content">
+                    <h3>Sala 101 - Kit Professor</h3>
+                    <p>Monitor não liga e teclado sem resposta</p>
+                </div>
+            </div>
+            
+            <!-- Ordem 2 -->
+            <div class="order-card in-progress">
+                <div class="order-meta">
+                    <span class="order-id">#OS-2023-002</span>
+                    <span class="order-date">16/10/2023</span>
+                    <span class="order-status in-progress">Em andamento</span>
+                </div>
+                <div class="order-content">
+                    <h3>Lab 203 - Posição 12</h3>
+                    <p>Computador não inicia o sistema</p>
+                </div>
+            </div>
+            
+            <!-- Ordem 3 -->
+            <div class="order-card completed">
+                <div class="order-meta">
+                    <span class="order-id">#OS-2023-003</span>
+                    <span class="order-date">10/10/2023</span>
+                    <span class="order-status completed">Concluída</span>
+                </div>
+                <div class="order-content">
+                    <h3>Sala 305 - Kit Professor</h3>
+                    <p>Cabo HDMI com defeito</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../assets/js/orders.js"></script>
+</body>
+</html>
