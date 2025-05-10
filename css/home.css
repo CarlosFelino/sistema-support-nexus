@@ -1,0 +1,147 @@
+/* =======================
+   home.css
+   ======================= */
+/* =======================
+   Hero Section
+   ======================= */
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    padding: var(--spacing-large) 5%;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.hero-content {
+    max-width: 600px;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: var(--spacing-medium);
+    background: linear-gradient(90deg, var(--secondary), var(--accent));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    line-height: 1.2;
+}
+
+.subtitle {
+    font-size: var(--font-size-medium);
+    margin-bottom: var(--spacing-large);
+    opacity: 0.9;
+    max-width: 100%;
+}
+
+.typing {
+    overflow: hidden;
+    white-space: nowrap;
+    border-right: 2px solid var(--text-light);
+    width: 0;
+    animation: typing 4s steps(40, end), blink 0.5s step-end infinite;
+}
+
+@keyframes typing {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+@keyframes blink {
+    50% {
+        border-color: transparent;
+    }
+}
+
+/* =======================
+   Botão Login
+   ======================= */
+.btn-login {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-medium) var(--spacing-large);
+    background: var(--gradient);
+    color: #0f1819;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 50px;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 20px rgba(122, 4, 235, 0.5);
+    position: relative;
+    overflow: hidden;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-login span {
+    position: relative;
+    z-index: 2;
+}
+
+.btn-login i {
+    margin-left: var(--spacing-small);
+    transform: translateX(0);
+    transition: transform 0.3s;
+    position: relative;
+    z-index: 2;
+}
+
+.btn-login:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(122, 4, 235, 0.7);
+}
+
+.btn-login:hover i {
+    transform: translateX(5px);
+}
+
+.btn-login::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--secondary));
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.btn-login:hover::before {
+    opacity: 1;
+}
+
+/* =======================
+   Footer
+   ======================= */
+.footer {
+    position: relative;
+    margin-top: auto;
+}
+
+.footer-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: var(--spacing-large) 0;
+    background-color: var(--primary-dark);
+}
+
+.footer-link {
+    color: var(--text-light);
+    text-decoration: none;
+    margin: 0 var(--spacing-small);
+    font-size: var(--font-size-small);
+}
+
+.footer-link:hover {
+    text-decoration: underline;
+}

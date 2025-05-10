@@ -15,3 +15,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+class ModalOrdem {
+  constructor() {
+    this.template = document.getElementById('modal-ordem-template');
+  }
+  
+  abrir(ordemId) {
+    // Carrega dados via fetch e exibe
+  }
+}

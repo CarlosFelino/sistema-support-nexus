@@ -105,3 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Transição suave ao carregar
     document.body.classList.add('loaded');
 });
+
+//autenticacao.js
+function protegerRota() {
+  if (!usuarioAutenticado()) {
+    window.location.href = '/entrar.html?redirect=' + encodeURIComponent(window.location.pathname);
+  }
+}
