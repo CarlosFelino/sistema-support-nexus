@@ -1,105 +1,79 @@
-<!-- entrar.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Support Nexus</title>
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/auth.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Meta Tags -->
-    <meta name="description" content="Acesse o sistema de ordens de serviço da Fatec Carapicuíba">
-    <link rel="preload" href="assets/images/logo.png" as="image">
-    <link rel="icon" href="assets/images/logo.png" type="image/x-icon">
+    <title>Login - Sistema de Suporte Nexus</title>
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/autenticacao.css">
 </head>
 <body>
-    <!-- Navbar -->
-    <nav class="navbar">
+    <header class="navbar">
         <div class="nav-container">
-            <a href="index-home.html" class="logo-link">
+            <a href="index.html" class="logo-link">
                 <div class="logo-container">
-                    <img src="assets/images/logo.png" alt="Support Nexus" class="logo">
-                    <span class="logo-text">Support Nexus</span>
+                    <span class="logo-text">Suporte Nexus</span>
                 </div>
             </a>
         </div>
-    </nav>
+    </header>
 
-    <!-- Conteúdo Principal -->
     <main class="auth-container">
-        <div class="auth-content">
-            <h1 class="auth-title">
-                <span class="title-part">Bem-vindo ao</span>
-                <span class="title-main">Support Nexus</span>
-            </h1>
-            
-            <div class="auth-card">
-                <div class="card-header">
-                    <h2>Login</h2>
-                    <div class="user-type-toggle">
-                        <button class="type-btn active" data-type="professor">Professor</button>
-                        <button class="type-btn" data-type="suporte">Suporte TI</button>
-                    </div>
-                </div>
-                
-                <form class="auth-form">
-                    <div class="form-group">
-                        <label for="email">Email Institucional</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-envelope icon"></i>
-                            <input type="email" id="email" placeholder="seu@email.fatec.sp.gov.br" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="password">Senha</label>
-                        <div class="input-wrapper">
-                            <i class="fas fa-lock icon"></i>
-                            <input type="password" id="password" placeholder="••••••••" required>
-                            <button type="button" class="show-password" aria-label="Mostrar senha">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="btn-auth">
-                        <span>Acessar Sistema</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </button>
-                </form>
-                
-                <div class="auth-footer">
-                    <a href="#" class="forgot-password">Esqueceu sua senha?</a>
-                </div>
+        <div class="auth-card">
+            <div class="card-header">
+                <h2>Login</h2>
             </div>
-        </div>
-        <!-- Modal de Recuperação de Senha -->
-        <div class="modal-overlay" id="recoveryModal">
-            <div class="modal-card">
-                <button class="modal-close">&times;</button>
-                <h2>Recuperar Senha</h2>
-                <p>Digite seu email institucional para receber o link de recuperação:</p>
-            <form id="recoveryForm">
+            <div class="user-type-toggle">
+                <button class="type-btn active" data-type="professor">Professor</button>
+                <button class="type-btn" data-type="suporte">Suporte</button>
+            </div>
+            <form id="loginForm" class="auth-form">
                 <div class="form-group">
+                    <label for="email">Email Institucional:</label>
                     <div class="input-wrapper">
-                        <i class="fas fa-envelope icon"></i>
-                        <input type="email" id="recoveryEmail" placeholder="seu@email.fatec.sp.gov.br" required>
+                        <input type="email" id="email" name="email" required placeholder="seuemail@fatec.sp.gov.br">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha:</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" name="password" required placeholder="Sua senha">
+                        <button type="button" class="show-password">
+                            <!-- Ícone de olho pode ser adicionado com JS/CSS ou FontAwesome -->
+                        </button>
                     </div>
                 </div>
                 <button type="submit" class="btn-auth">
-                    <span>Enviar Link</span>
-                    <i class="fas fa-paper-plane"></i>
+                    <span>Entrar</span>
                 </button>
+            </form>
+            <div class="auth-footer">
+                <a href="#" class="forgot-password">Esqueceu a senha?</a>
+                <p>Não tem uma conta? <a href="cadastro.html" class="forgot-password">Cadastre-se</a></p>
+            </div>
+        </div>
+    </main>
+
+    <div class="modal-overlay" id="recoveryModal">
+        <div class="modal-card">
+            <button class="modal-close">&times;</button>
+            <h2>Recuperar Senha</h2>
+            <p>Insira seu email institucional para receber o link de recuperação.</p>
+            <form id="recoveryForm" class="auth-form">
+                <div class="form-group">
+                    <label for="recoveryEmail">Email Institucional:</label>
+                    <input type="email" id="recoveryEmail" name="recoveryEmail" required placeholder="seuemail@fatec.sp.gov.br">
+                </div>
+                <button type="submit" class="btn-auth">Enviar Link</button>
             </form>
         </div>
     </div>
-    </main>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <p>© 2025 Support Nexus - Fatec Carapicuíba</p>
+            <p>&copy; 2024 Suporte Nexus. Todos os direitos reservados.</p>
+            <a href="termos.html" class="footer-link">Termos de Serviço</a>
+            <a href="sobre.html" class="footer-link">Sobre Nós</a>
         </div>
     </footer>
 

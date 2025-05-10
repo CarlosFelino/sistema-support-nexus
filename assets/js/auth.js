@@ -1,3 +1,4 @@
+//auth.js
 document.addEventListener('DOMContentLoaded', () => {
     // Elementos do DOM
     const recoveryModal = document.getElementById('recoveryModal');

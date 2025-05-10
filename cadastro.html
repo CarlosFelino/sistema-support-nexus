@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Sistema de Suporte Nexus</title>
+    <link rel="stylesheet" href="assets/css/global.css">
+    <link rel="stylesheet" href="assets/css/autenticacao.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo-link">
+                <div class="logo-container">
+                    <span class="logo-text">Suporte Nexus</span>
+                </div>
+            </a>
+        </div>
+    </header>
+
+    <main class="auth-container">
+        <div class="auth-card">
+            <div class="card-header">
+                <h2>Crie sua Conta</h2>
+            </div>
+            <form id="registerForm" class="auth-form">
+                <div class="form-group">
+                    <label for="fullName">Nome Completo:</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="fullName" name="fullName" required placeholder="Seu nome completo">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email Institucional:</label>
+                    <div class="input-wrapper">
+                        <input type="email" id="registerEmail" name="registerEmail" required placeholder="seuemail@fatec.sp.gov.br">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Senha:</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="registerPassword" name="registerPassword" required placeholder="Crie uma senha">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Senha:</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirme sua senha">
+                    </div>
+                </div>
+                <button type="submit" class="btn-auth">
+                    <span>Cadastrar</span>
+                </button>
+            </form>
+            <div class="auth-footer">
+                <p>Já tem uma conta? <a href="login.html" class="forgot-password">Faça Login</a></p>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2024 Suporte Nexus. Todos os direitos reservados.</p>
+            <a href="termos.html" class="footer-link">Termos de Serviço</a>
+            <a href="sobre.html" class="footer-link">Sobre Nós</a>
+        </div>
+    </footer>
+
+    <script src="assets/js/auth.js"></script>
+</body>
+</html>
