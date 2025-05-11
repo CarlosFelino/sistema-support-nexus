@@ -1,28 +1,34 @@
-//auth.js
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', function() {
     // Elementos do DOM
-    const recoveryModal = document.getElementById('recoveryModal');
-    const recoveryLink = document.querySelector('.forgot-password');
-    const modalClose = document.querySelector('.modal-close');
+    const loginForm = document.getElementById('loginForm');
     const recoveryForm = document.getElementById('recoveryForm');
+    const recoveryModal = document.getElementById('recoveryModal');
+    const forgotPasswordLink = document.getElementById('forgotPassword');
+    const modalClose = document.querySelector('.modal-close');
     const typeButtons = document.querySelectorAll('.type-btn');
     const showPasswordBtn = document.querySelector('.show-password');
-    const loginForm = document.querySelector('.auth-form');
+    const passwordInput = document.getElementById('password');
+    const recoveryFeedback = document.getElementById('recoveryFeedback');
+    const emailInput = document.getElementById('email');
+    const recoveryEmailInput = document.getElementById('recoveryEmail');
+
+    // Estado da aplicação
+    let isLoading = false;
 
     // Toggle de tipo de usuário
     typeButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', function() {
+            if (isLoading) return;
+            
             typeButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
+            this.classList.add('active');
         });
     });
 
-    // Toggle de mostrar senha
-    if (showPasswordBtn) {
-        showPasswordBtn.addEventListener('click', () => {
-            const passwordInput = document.getElementById('password');
-            const icon = showPasswordBtn.querySelector('i');
-            
+    // Mostrar/ocultar senha
+    if (showPasswordBtn && passwordInput) {
+        showPasswordBtn.addEventListener('click', function() {
+            const icon = this.querySelector('i');
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 icon.classList.replace('fa-eye', 'fa-eye-slash');
@@ -34,82 +40,234 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Abrir modal de recuperação
-    recoveryLink.addEventListener('click', (e) => {
+    forgotPasswordLink.addEventListener('click', function(e) {
         e.preventDefault();
+        if (isLoading) return;
+        
         recoveryModal.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Bloqueia scroll
+        document.body.style.overflow = 'hidden';
+        recoveryEmailInput.focus();
     });
 
     // Fechar modal
-    modalClose.addEventListener('click', () => {
-        closeModal();
-    });
-
-    // Fechar ao clicar fora
-    recoveryModal.addEventListener('click', (e) => {
+    modalClose.addEventListener('click', closeModal);
+    recoveryModal.addEventListener('click', function(e) {
         if (e.target === recoveryModal) {
             closeModal();
         }
     });
 
     // Fechar com ESC
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && recoveryModal.classList.contains('active')) {
             closeModal();
         }
     });
 
-    // Enviar formulário de recuperação
-    recoveryForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const email = document.getElementById('recoveryEmail').value;
-        
-        if (!email.endsWith('@fatec.sp.gov.br')) {
-            alert('Por favor, use seu email institucional (@fatec.sp.gov.br)');
-            return;
-        }
-        
-        // Simulação de envio (substitua por AJAX na implementação real)
-        alert(`Link de recuperação enviado para: ${email}`);
-        closeModal();
-    });
+    // Validação em tempo real do email
+    if (emailInput) {
+        emailInput.addEventListener('input', function() {
+            validateEmailInput(this);
+        });
+    }
+
+    if (recoveryEmailInput) {
+        recoveryEmailInput.addEventListener('input', function() {
+            validateEmailInput(this);
+        });
+    }
 
     // Validação do formulário de login
     if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            if (isLoading) return;
             
-            const email = document.getElementById('email').value;
+            const email = emailInput.value;
+            const password = passwordInput.value;
             const userType = document.querySelector('.type-btn.active').dataset.type;
             
-            if (!email.endsWith('@fatec.sp.gov.br')) {
-                alert('Por favor, use seu email institucional (@fatec.sp.gov.br)');
+            // Validação do email institucional
+            if (!validateFatecEmail(email)) {
+                showError('Por favor, use seu email institucional (@fatec.sp.gov.br)');
                 return;
             }
             
-            // Simulação de redirecionamento
-            if (userType === 'suporte') {
-                window.location.href = 'admin/index-adm.html';
-            } else {
-                window.location.href = 'professor/index-prof.html';
+            // Validação da senha
+            if (password.length < 6) {
+                showError('A senha deve ter pelo menos 6 caracteres');
+                return;
+            }
+            
+            // Simular loading
+            setLoading(true);
+            
+            try {
+                // Simulação de autenticação - SUBSTITUIR POR CHAMADA REAL À API
+                await simulateLogin(email, password, userType);
+                
+                // Redirecionamento baseado no tipo de usuário
+                redirectUser(userType);
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                setLoading(false);
             }
         });
     }
 
-    // Função para fechar modal
-    function closeModal() {
-        recoveryModal.classList.remove('active');
-        document.body.style.overflow = 'auto'; // Restaura scroll
-        recoveryForm.reset(); // Limpa o formulário
+    // Formulário de recuperação de senha
+    if (recoveryForm) {
+        recoveryForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            if (isLoading) return;
+            
+            const email = recoveryEmailInput.value;
+            
+            if (!validateFatecEmail(email)) {
+                showRecoveryError('Por favor, use seu email institucional (@fatec.sp.gov.br)');
+                return;
+            }
+            
+            setLoading(true);
+            
+            try {
+                // Simulação de envio de email - SUBSTITUIR POR CHAMADA REAL À API
+                await simulatePasswordRecovery(email);
+                
+                showRecoverySuccess(`Link de recuperação enviado para: ${email}`);
+                recoveryForm.reset();
+                
+                // Fechar modal após 3 segundos
+                setTimeout(() => {
+                    closeModal();
+                }, 3000);
+            } catch (error) {
+                showRecoveryError(error.message);
+            } finally {
+                setLoading(false);
+            }
+        });
     }
 
-    // Transição suave ao carregar
-    document.body.classList.add('loaded');
-});
+    // Funções auxiliares
+    function validateFatecEmail(email) {
+        const fatecEmailRegex = /^[a-zA-Z0-9._-]+@fatec\.sp\.gov\.br$/;
+        return fatecEmailRegex.test(email);
+    }
 
-//autenticacao.js
-function protegerRota() {
-  if (!usuarioAutenticado()) {
-    window.location.href = '/entrar.html?redirect=' + encodeURIComponent(window.location.pathname);
-  }
-}
+    function validateEmailInput(input) {
+        if (input.value && !validateFatecEmail(input.value)) {
+            input.classList.add('invalid');
+        } else {
+            input.classList.remove('invalid');
+        }
+    }
+
+    function showError(message) {
+        // Criar ou reutilizar elemento de erro
+        let errorElement = document.querySelector('.login-error');
+        
+        if (!errorElement) {
+            errorElement = document.createElement('div');
+            errorElement.className = 'login-error';
+            loginForm.insertBefore(errorElement, loginForm.firstChild);
+        }
+        
+        errorElement.textContent = message;
+        errorElement.style.display = 'block';
+        
+        // Esconder após 5 segundos
+        setTimeout(() => {
+            errorElement.style.display = 'none';
+        }, 5000);
+    }
+
+    function showRecoveryError(message) {
+        recoveryFeedback.textContent = message;
+        recoveryFeedback.className = 'error';
+        recoveryFeedback.style.display = 'block';
+    }
+
+    function showRecoverySuccess(message) {
+        recoveryFeedback.textContent = message;
+        recoveryFeedback.className = 'success';
+        recoveryFeedback.style.display = 'block';
+    }
+
+    function setLoading(loading) {
+        isLoading = loading;
+        
+        // Atualizar todos os botões de submit
+        const submitButtons = document.querySelectorAll('button[type="submit"]');
+        submitButtons.forEach(button => {
+            if (loading) {
+                button.disabled = true;
+                button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processando...';
+            } else {
+                button.disabled = false;
+                if (button === loginForm.querySelector('button[type="submit"]')) {
+                    button.innerHTML = '<span>Entrar</span><i class="fas fa-arrow-right"></i>';
+                } else {
+                    button.innerHTML = '<span>Enviar Link</span><i class="fas fa-paper-plane"></i>';
+                }
+            }
+        });
+    }
+
+    function closeModal() {
+        recoveryModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+        recoveryFeedback.style.display = 'none';
+        recoveryForm.reset();
+    }
+
+    function redirectUser(userType) {
+        // Simulação de redirecionamento - atualizar com as rotas reais
+        const routes = {
+            'professor': 'pages/professor/painel-professor.html',
+            'suporte': 'pages/suporte/painel-suporte.html'
+        };
+        
+        window.location.href = routes[userType];
+    }
+
+    // Funções de simulação (remover na implementação real)
+    function simulateLogin(email, password, userType) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                // Simulação de credenciais inválidas
+                if (password.length < 6) {
+                    reject(new Error('Senha incorreta. Tente novamente.'));
+                } else {
+                    // Simulação de login bem-sucedido
+                    localStorage.setItem('authToken', 'simulated-token');
+                    localStorage.setItem('userType', userType);
+                    resolve();
+                }
+            }, 1500);
+        });
+    }
+
+    function simulatePasswordRecovery(email) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                // Sempre simular sucesso para demonstração
+                resolve();
+            }, 1500);
+        });
+    }
+
+    // Proteger rotas (exemplo)
+    function protegerRota() {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            window.location.href = 'login.html?redirect=' + encodeURIComponent(window.location.pathname);
+        }
+    }
+
+    // Verificar autenticação ao carregar
+    if (window.location.pathname.includes('pages/')) {
+        protegerRota();
+    }
+});
