@@ -128,6 +128,49 @@ body {
     padding: var(--spacing-large) 0;
     background-color: var(--primary-dark);
 }
+/* =======================
+   Footer
+   ======================= */
+.footer {
+    background: var(--primary-dark);
+    padding: var(--spacing-medium) 0;
+    text-align: center;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.footer-links {
+    margin-top: var(--spacing-small);
+}
+
+.footer-link {
+    color: var(--text-light);
+    text-decoration: none;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.footer-link:hover {
+    color: var(--accent);
+}
+
+.footer-link:hover::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--gradient);
+}
+
+.divider {
+    margin: 0 var(--spacing-small);
+    color: rgba(255, 255, 255, 0.3);
+}
 
 /* =======================
    Acessibilidade
