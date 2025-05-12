@@ -246,7 +246,7 @@
     backdrop-filter: blur(10px);
     border-radius: 15px;
     padding: 2rem;
-    opacity: 0;
+    opacity: 1;
     transition: opacity 0.6s;
 }
 
