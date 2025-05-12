@@ -15,24 +15,21 @@ document.addEventListener('DOMContentLoaded', function() {
         sidebar.classList.remove('active');
         overlay.classList.remove('active');
     });
+    // Clicar no perfil
+    let dropdownVisible = false;
 
-    // Dropdown do Perfil
-    const profileDropdown = document.querySelector('.profile-dropdown');
-    profileDropdown.addEventListener('click', (e) => {
+    document.querySelector('.profile-avatar').addEventListener('click', (e) => {
         e.stopPropagation();
-        document.querySelector('.dropdown-content').classList.toggle('show');
+        const dropdown = document.querySelector('.dropdown-content');
+        dropdownVisible = !dropdownVisible;
+        dropdown.style.display = dropdownVisible ? 'block' : 'none';
     });
 
-    // Fechar dropdown ao clicar fora
+    // Fechar ao clicar fora
     document.addEventListener('click', () => {
-        document.querySelector('.dropdown-content').classList.remove('show');
-    });
-
-    // Logout
-    document.getElementById('logout').addEventListener('click', (e) => {
-        e.preventDefault();
-        // Adicionar lógica de logout aqui
-        localStorage.removeItem('userToken');
-        window.location.href = '../../index.html';
+        if(dropdownVisible) {
+            document.querySelector('.dropdown-content').style.display = 'none';
+            dropdownVisible = false;
+        }
     });
 });
