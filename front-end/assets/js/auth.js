@@ -103,11 +103,24 @@ document.addEventListener('DOMContentLoaded', function() {
             setLoading(true);
             
             try {
-                // Simulação de autenticação - SUBSTITUIR POR CHAMADA REAL À API
-                await simulateLogin(email, password, userType);
+                // Autenticar usando os dados do localStorage
+                const user = authenticateUser(email, password, userType);
                 
-                // Redirecionamento baseado no tipo de usuário
-                redirectUser(userType);
+                if (user) {
+                    // Salvar dados da sessão
+                    localStorage.setItem('authToken', generateAuthToken());
+                    localStorage.setItem('currentUser', JSON.stringify({
+                        id: user.employeeId,
+                        name: user.fullName,
+                        email: user.email,
+                        type: user.userType
+                    }));
+                    
+                    // Redirecionamento baseado no tipo de usuário
+                    redirectUser(userType);
+                } else {
+                    throw new Error('Credenciais inválidas. Verifique seu email e senha.');
+                }
             } catch (error) {
                 showError(error.message);
             } finally {
@@ -132,16 +145,20 @@ document.addEventListener('DOMContentLoaded', function() {
             setLoading(true);
             
             try {
-                // Simulação de envio de email - SUBSTITUIR POR CHAMADA REAL À API
-                await simulatePasswordRecovery(email);
+                // Verificar se o email existe
+                const userExists = checkIfUserExists(email);
                 
-                showRecoverySuccess(`Link de recuperação enviado para: ${email}`);
-                recoveryForm.reset();
-                
-                // Fechar modal após 3 segundos
-                setTimeout(() => {
-                    closeModal();
-                }, 3000);
+                if (userExists) {
+                    showRecoverySuccess(`Link de recuperação enviado para: ${email}`);
+                    recoveryForm.reset();
+                    
+                    // Fechar modal após 3 segundos
+                    setTimeout(() => {
+                        closeModal();
+                    }, 3000);
+                } else {
+                    throw new Error('Email não cadastrado no sistema');
+                }
             } catch (error) {
                 showRecoveryError(error.message);
             } finally {
@@ -150,7 +167,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Funções auxiliares
+    // Função para autenticar usuário
+    function authenticateUser(email, password, userType) {
+        // Obter usuários do localStorage
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        
+        // Encontrar usuário com email correspondente e tipo correto
+        const user = users.find(u => 
+            u.email === email && 
+            u.userType === userType && 
+            u.password === password // ATENÇÃO: Em produção, usar hash de senha
+        );
+        
+        return user || null;
+    }
+
+    // Função para verificar se usuário existe
+    function checkIfUserExists(email) {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        return users.some(u => u.email === email);
+    }
+
+    // Gerar token de autenticação simples
+    function generateAuthToken() {
+        return 'token-' + Math.random().toString(36).substr(2) + Date.now().toString(36);
+    }
+
+    // Funções auxiliares (mantidas as mesmas)
     function validateFatecEmail(email) {
         const fatecEmailRegex = /^[a-zA-Z0-9._-]+@fatec\.sp\.gov\.br$/;
         return fatecEmailRegex.test(email);
@@ -165,7 +208,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showError(message) {
-        // Criar ou reutilizar elemento de erro
         let errorElement = document.querySelector('.login-error');
         
         if (!errorElement) {
@@ -177,7 +219,6 @@ document.addEventListener('DOMContentLoaded', function() {
         errorElement.textContent = message;
         errorElement.style.display = 'block';
         
-        // Esconder após 5 segundos
         setTimeout(() => {
             errorElement.style.display = 'none';
         }, 5000);
@@ -198,7 +239,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function setLoading(loading) {
         isLoading = loading;
         
-        // Atualizar todos os botões de submit
         const submitButtons = document.querySelectorAll('button[type="submit"]');
         submitButtons.forEach(button => {
             if (loading) {
@@ -223,39 +263,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function redirectUser(userType) {
-        // Simulação de redirecionamento - atualizar com as rotas reais
         const routes = {
             'professor': 'pages/professor/painel-professor.html',
             'suporte': 'pages/suporte/painel-suporte.html'
         };
         
         window.location.href = routes[userType];
-    }
-
-    // Funções de simulação (remover na implementação real)
-    function simulateLogin(email, password, userType) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                // Simulação de credenciais inválidas
-                if (password.length < 6) {
-                    reject(new Error('Senha incorreta. Tente novamente.'));
-                } else {
-                    // Simulação de login bem-sucedido
-                    localStorage.setItem('authToken', 'simulated-token');
-                    localStorage.setItem('userType', userType);
-                    resolve();
-                }
-            }, 1500);
-        });
-    }
-
-    function simulatePasswordRecovery(email) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                // Sempre simular sucesso para demonstração
-                resolve();
-            }, 1500);
-        });
     }
 
     // Proteger rotas (exemplo)

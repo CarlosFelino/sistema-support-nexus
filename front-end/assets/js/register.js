@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Elementos do DOM
-    const registerForm = document.querySelector('.cadastro-container');
+    const registerForm = document.getElementById('registerForm');
     const typeButtons = document.querySelectorAll('.type-btn');
     const showPasswordBtns = document.querySelectorAll('.show-password');
     const passwordInput = document.getElementById('password');
@@ -66,16 +66,87 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Cadastrando...';
                 
-                // Simular envio (substituir por chamada AJAX)
-                setTimeout(() => {
-                    alert('Cadastro realizado com sucesso! Redirecionando para login...');
-                    window.location.href = 'login.html';
-                }, 1500);
+                // Criar objeto com os dados do formulário
+                const formData = {
+                    userType: document.querySelector('.type-btn.active').dataset.type,
+                    employeeId: document.getElementById('employeeId').value,
+                    fullName: document.getElementById('fullName').value,
+                    birthDate: document.getElementById('birthDate').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    password: document.getElementById('password').value,
+                    registrationDate: new Date().toISOString()
+                };
+
+                // Converter para JSON
+                const formDataJSON = JSON.stringify(formData);
+                console.log('Dados em JSON:', formDataJSON);
+
+                // 1. Salvar no localStorage (para persistência local)
+                saveToLocalStorage(formData);
+                
+                // 2. Simular envio para um servidor (substituir por chamada real)
+                simulateServerSubmission(formDataJSON)
+                    .then(response => {
+                        // Salvar flag de cadastro bem-sucedido
+                        localStorage.setItem('showRegistrationSuccess', 'true');
+                        // Redirecionar
+                        window.location.href = 'login.html';
+                    })
+                    .catch(error => {
+                        console.error('Erro no cadastro:', error);
+                        alert('Ocorreu um erro no cadastro. Por favor, tente novamente.');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="fas fa-save"></i> Cadastrar Usuário';
+                    });
             }
         });
     }
 
-    // Funções auxiliares
+    // Função para salvar no localStorage
+    function saveToLocalStorage(userData) {
+        try {
+            // Obter usuários existentes ou criar um novo array
+            const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
+            
+            // Verificar se o usuário já existe
+            const userExists = existingUsers.some(user => 
+                user.email === userData.email || user.employeeId === userData.employeeId
+            );
+            
+            if (userExists) {
+                throw new Error('Usuário já cadastrado');
+            }
+            
+            // Adicionar novo usuário
+            existingUsers.push(userData);
+            
+            // Salvar no localStorage
+            localStorage.setItem('users', JSON.stringify(existingUsers));
+            console.log('Usuário salvo no localStorage');
+        } catch (error) {
+            console.error('Erro ao salvar no localStorage:', error);
+            throw error;
+        }
+    }
+
+    // Função para simular envio ao servidor
+    function simulateServerSubmission(data) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                // Simular erro aleatório (apenas para demonstração)
+                const shouldFail = Math.random() < 0.1; // 10% de chance de falha
+                
+                if (shouldFail) {
+                    reject({ status: 500, message: 'Erro interno do servidor' });
+                } else {
+                    resolve({ status: 200, message: 'Sucesso', data: JSON.parse(data) });
+                }
+            }, 1500);
+        });
+    }
+
+    // Funções auxiliares (mantidas as mesmas)
     function formatPhoneNumber(value) {
         if (!value) return '';
         
@@ -146,5 +217,24 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         return isValid;
+    }
+});
+
+// Verificar se deve mostrar mensagem de sucesso
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('showRegistrationSuccess') === 'true') {
+        // Criar e mostrar mensagem
+        const successMessage = document.createElement('div');
+        successMessage.className = 'alert alert-success';
+        successMessage.innerHTML = '<i class="fas fa-check-circle"></i> Usuário cadastrado com sucesso!';
+        document.querySelector('main').prepend(successMessage);
+        
+        // Remover a flag para não mostrar novamente
+        localStorage.removeItem('showRegistrationSuccess');
+        
+        // Remover a mensagem após 5 segundos
+        setTimeout(() => {
+            successMessage.remove();
+        }, 5000);
     }
 });
