@@ -47,14 +47,7 @@
     font-size: 1rem;
 }
 /* Toggle de Tipo de Usuário */
-.user-type-toggle {
-    display: flex;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 50px;
-    padding: 5px;
-    margin-bottom: 2rem;
-    gap: 5px;
-}
+
 .type-btn {
     flex: 1;
     padding: 0.8rem;
@@ -83,6 +76,7 @@
 .auth-form {
     display: flex;
     flex-direction: column;
+    margin-top: 2rem;
 }
 .form-group {
     margin-bottom: 1.8rem;

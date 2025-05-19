@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const recoveryModal = document.getElementById('recoveryModal');
     const forgotPasswordLink = document.getElementById('forgotPassword');
     const modalClose = document.querySelector('.modal-close');
-    const typeButtons = document.querySelectorAll('.type-btn');
     const showPasswordBtn = document.querySelector('.show-password');
     const passwordInput = document.getElementById('password');
     const recoveryFeedback = document.getElementById('recoveryFeedback');
@@ -14,16 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Estado da aplicação
     let isLoading = false;
-
-    // Toggle de tipo de usuário
-    typeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            if (isLoading) return;
-            
-            typeButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
 
     // Mostrar/ocultar senha
     if (showPasswordBtn && passwordInput) {
@@ -85,41 +74,38 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const email = emailInput.value;
             const password = passwordInput.value;
-            const userType = document.querySelector('.type-btn.active').dataset.type;
             
             // Validação do email institucional
             if (!validateFatecEmail(email)) {
                 showError('Por favor, use seu email institucional (@fatec.sp.gov.br)');
                 return;
             }
-            
+
             // Validação da senha
             if (password.length < 6) {
                 showError('A senha deve ter pelo menos 6 caracteres');
                 return;
             }
             
-            // Simular loading
             setLoading(true);
             
             try {
-                // Autenticar usando os dados do localStorage
-                const user = authenticateUser(email, password, userType);
+                // Usar a API simulada para login
+                const response = await mockApi.login(email, password);
                 
-                if (user) {
-                    // Salvar dados da sessão
-                    localStorage.setItem('authToken', generateAuthToken());
-                    localStorage.setItem('currentUser', JSON.stringify({
-                        id: user.employeeId,
-                        name: user.fullName,
-                        email: user.email,
-                        type: user.userType
-                    }));
+                if (response.success) {
+                    // Obter informações completas do usuário
+                    const users = JSON.parse(localStorage.getItem('users')) || [];
+                    const user = users.find(u => u.email === email);
                     
-                    // Redirecionamento baseado no tipo de usuário
-                    redirectUser(userType);
+                    if (!user) {
+                        throw new Error('Usuário não encontrado');
+                    }
+                    
+                    // Redirecionar conforme o tipo de usuário
+                    redirectUser(user.userType);
                 } else {
-                    throw new Error('Credenciais inválidas. Verifique seu email e senha.');
+                    throw new Error(response.message || 'Email ou senha incorretos');
                 }
             } catch (error) {
                 showError(error.message);
@@ -146,10 +132,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             try {
                 // Verificar se o email existe
-                const userExists = checkIfUserExists(email);
+                const response = await mockApi.requestPasswordReset(email);
                 
-                if (userExists) {
-                    showRecoverySuccess(`Link de recuperação enviado para: ${email}`);
+                if (response.success) {
+                    showRecoverySuccess(response.message);
                     recoveryForm.reset();
                     
                     // Fechar modal após 3 segundos
@@ -157,7 +143,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         closeModal();
                     }, 3000);
                 } else {
-                    throw new Error('Email não cadastrado no sistema');
+                    throw new Error(response.message);
                 }
             } catch (error) {
                 showRecoveryError(error.message);
@@ -167,33 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Função para autenticar usuário
-    function authenticateUser(email, password, userType) {
-        // Obter usuários do localStorage
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        
-        // Encontrar usuário com email correspondente e tipo correto
-        const user = users.find(u => 
-            u.email === email && 
-            u.userType === userType && 
-            u.password === password // ATENÇÃO: Em produção, usar hash de senha
-        );
-        
-        return user || null;
-    }
-
-    // Função para verificar se usuário existe
-    function checkIfUserExists(email) {
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        return users.some(u => u.email === email);
-    }
-
-    // Gerar token de autenticação simples
-    function generateAuthToken() {
-        return 'token-' + Math.random().toString(36).substr(2) + Date.now().toString(36);
-    }
-
-    // Funções auxiliares (mantidas as mesmas)
+    // Funções auxiliares
     function validateFatecEmail(email) {
         const fatecEmailRegex = /^[a-zA-Z0-9._-]+@fatec\.sp\.gov\.br$/;
         return fatecEmailRegex.test(email);
@@ -263,12 +223,24 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function redirectUser(userType) {
-        const routes = {
-            'professor': 'pages/professor/painel-professor.html',
-            'suporte': 'pages/suporte/painel-suporte.html'
-        };
+        // Verificar se há um token válido
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            window.location.href = 'login.html';
+            return;
+        }
         
-        window.location.href = routes[userType];
+        // Redirecionar conforme o tipo de usuário
+        switch(userType) {
+            case 'professor':
+                window.location.href = 'pages/professor/painel-professor.html';
+                break;
+            case 'suporte':
+                window.location.href = 'pages/suporte/painel-suporte.html';
+                break;
+            default:
+                window.location.href = 'index.html';
+        }
     }
 
     // Proteger rotas (exemplo)

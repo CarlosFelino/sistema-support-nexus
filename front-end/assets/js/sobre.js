@@ -39,4 +39,12 @@ document.addEventListener('DOMContentLoaded', () => {
             heroSection.style.backgroundPositionY = `${scrollPosition * 0.5}px`;
         });
     }
+    document.querySelectorAll('.social-icon').forEach(icon => {
+    icon.addEventListener('mouseenter', () => {
+        icon.style.transform = 'scale(1.2)';
+    });
+    icon.addEventListener('mouseleave', () => {
+        icon.style.transform = 'scale(1)';
+    });
+    });
 });

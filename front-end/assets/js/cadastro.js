@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Elementos do DOM
-    const registerForm = document.getElementById('registerForm');
+    const registerForm = document.querySelector('.cadastro-container');
     const typeButtons = document.querySelectorAll('.type-btn');
     const showPasswordBtns = document.querySelectorAll('.show-password');
     const passwordInput = document.getElementById('password');
@@ -57,9 +57,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Validação do formulário
-    if (registerForm) {
-        registerForm.addEventListener('submit', function(e) {
+    // Evento de clique no botão de submit
+    if (submitBtn) {
+        submitBtn.addEventListener('click', function(e) {
             e.preventDefault();
             
             if (validateForm()) {
@@ -78,126 +78,67 @@ document.addEventListener('DOMContentLoaded', function() {
                     registrationDate: new Date().toISOString()
                 };
 
-                // Converter para JSON
-                const formDataJSON = JSON.stringify(formData);
-                console.log('Dados em JSON:', formDataJSON);
-
-                // 1. Salvar no localStorage (para persistência local)
-                saveToLocalStorage(formData);
-                
-                // 2. Simular envio para um servidor (substituir por chamada real)
-                simulateServerSubmission(formDataJSON)
-                    .then(response => {
-                        // Salvar flag de cadastro bem-sucedido
-                        localStorage.setItem('showRegistrationSuccess', 'true');
-                        // Redirecionar
-                        window.location.href = 'login.html';
-                    })
-                    .catch(error => {
-                        console.error('Erro no cadastro:', error);
-                        alert('Ocorreu um erro no cadastro. Por favor, tente novamente.');
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = '<i class="fas fa-save"></i> Cadastrar Usuário';
-                    });
-            }
-        });
-    }
-
-    // Função para salvar no localStorage
-    function saveToLocalStorage(userData) {
-        try {
-            // Obter usuários existentes ou criar um novo array
-            const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
-            
-            // Verificar se o usuário já existe
-            const userExists = existingUsers.some(user => 
-                user.email === userData.email || user.employeeId === userData.employeeId
-            );
-            
-            if (userExists) {
-                throw new Error('Usuário já cadastrado');
-            }
-            
-            // Adicionar novo usuário
-            existingUsers.push(userData);
-            
-            // Salvar no localStorage
-            localStorage.setItem('users', JSON.stringify(existingUsers));
-            console.log('Usuário salvo no localStorage');
-        } catch (error) {
-            console.error('Erro ao salvar no localStorage:', error);
-            throw error;
-        }
-    }
-
-    // Função para simular envio ao servidor
-    function simulateServerSubmission(data) {
-        return new Promise((resolve, reject) => {
-            setTimeout(() => {
-                // Simular erro aleatório (apenas para demonstração)
-                const shouldFail = Math.random() < 0.1; // 10% de chance de falha
-                
-                if (shouldFail) {
-                    reject({ status: 500, message: 'Erro interno do servidor' });
-                } else {
-                    resolve({ status: 200, message: 'Sucesso', data: JSON.parse(data) });
+                // 1. Salvar no localStorage
+                try {
+                    saveToLocalStorage(formData);
+                    
+                    // 2. Simular envio para servidor
+                    simulateServerSubmission(formData)
+                        .then(() => {
+                            localStorage.setItem('showRegistrationSuccess', 'true');
+                            window.location.href = 'login.html';
+                        })
+                        .catch(error => {
+                            console.error('Erro:', error);
+                            alert('Erro no cadastro: ' + error.message);
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = '<i class="fas fa-save"></i> Cadastrar Usuário';
+                        });
+                } catch (error) {
+                    console.error('Erro:', error);
+                    alert('Erro: ' + error.message);
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fas fa-save"></i> Cadastrar Usuário';
                 }
-            }, 1500);
+            }
         });
     }
 
-    // Funções auxiliares (mantidas as mesmas)
+    // Funções auxiliares
     function formatPhoneNumber(value) {
         if (!value) return '';
-        
-        if (value.length <= 2) {
-            return `(${value}`;
-        } else if (value.length <= 7) {
-            return `(${value.slice(0, 2)}) ${value.slice(2)}`;
-        } else {
-            return `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
-        }
+        if (value.length <= 2) return `(${value}`;
+        if (value.length <= 7) return `(${value.slice(0, 2)}) ${value.slice(2)}`;
+        return `(${value.slice(0, 2)}) ${value.slice(2, 7)}-${value.slice(7, 11)}`;
     }
 
     function checkPasswordMatch() {
-        if (passwordInput.value && confirmPasswordInput.value) {
-            if (passwordInput.value !== confirmPasswordInput.value) {
-                passwordMatchFeedback.textContent = 'As senhas não coincidem';
-                passwordMatchFeedback.className = 'password-match-feedback visible no-match';
-                return false;
-            } else {
-                passwordMatchFeedback.textContent = 'As senhas coincidem';
-                passwordMatchFeedback.className = 'password-match-feedback visible match';
-                return true;
-            }
-        }
-        return false;
+        if (!passwordInput.value || !confirmPasswordInput.value) return false;
+        
+        const match = passwordInput.value === confirmPasswordInput.value;
+        passwordMatchFeedback.textContent = match ? 'As senhas coincidem' : 'As senhas não coincidem';
+        passwordMatchFeedback.className = `password-match-feedback visible ${match ? 'match' : 'no-match'}`;
+        return match;
     }
 
     function checkPasswordStrength(password) {
-        const strength = calculatePasswordStrength(password);
-        strengthBar.style.width = `${strength.percentage}%`;
-        strengthBar.style.backgroundColor = strength.color;
-        strengthText.textContent = strength.text;
-        strengthText.style.color = strength.color;
-    }
-
-    function calculatePasswordStrength(password) {
         let strength = 0;
+        if (password.length > 5) strength++;
+        if (password.length > 8) strength++;
+        if (/[A-Z]/.test(password)) strength++;
+        if (/[0-9]/.test(password)) strength++;
+        if (/[^A-Za-z0-9]/.test(password)) strength++;
         
-        if (password.length > 5) strength += 1;
-        if (password.length > 8) strength += 1;
-        if (/[A-Z]/.test(password)) strength += 1;
-        if (/[0-9]/.test(password)) strength += 1;
-        if (/[^A-Za-z0-9]/.test(password)) strength += 1;
+        const strengthData = strength <= 2 ? 
+            { percentage: 33, color: '#ff3860', text: 'fraca' } :
+            strength <= 4 ? 
+            { percentage: 66, color: '#ffdd57', text: 'média' } :
+            { percentage: 100, color: '#09c372', text: 'forte' };
         
-        if (strength <= 2) {
-            return { percentage: 33, color: '#ff3860', text: 'fraca' };
-        } else if (strength <= 4) {
-            return { percentage: 66, color: '#ffdd57', text: 'média' };
-        } else {
-            return { percentage: 100, color: '#09c372', text: 'forte' };
-        }
+        strengthBar.style.width = `${strengthData.percentage}%`;
+        strengthBar.style.backgroundColor = strengthData.color;
+        strengthText.textContent = strengthData.text;
+        strengthText.style.color = strengthData.color;
     }
 
     function validateForm() {
@@ -218,23 +159,48 @@ document.addEventListener('DOMContentLoaded', function() {
         
         return isValid;
     }
-});
 
-// Verificar se deve mostrar mensagem de sucesso
-document.addEventListener('DOMContentLoaded', function() {
-    if (localStorage.getItem('showRegistrationSuccess') === 'true') {
-        // Criar e mostrar mensagem
-        const successMessage = document.createElement('div');
-        successMessage.className = 'alert alert-success';
-        successMessage.innerHTML = '<i class="fas fa-check-circle"></i> Usuário cadastrado com sucesso!';
-        document.querySelector('main').prepend(successMessage);
+    function saveToLocalStorage(userData) {
+        const existingUsers = JSON.parse(localStorage.getItem('users')) || [];
+        const userExists = existingUsers.some(user => 
+            user.email === userData.email || user.employeeId === userData.employeeId
+        );
         
-        // Remover a flag para não mostrar novamente
-        localStorage.removeItem('showRegistrationSuccess');
+        if (userExists) {
+            throw new Error('Usuário já cadastrado');
+        }
         
-        // Remover a mensagem após 5 segundos
-        setTimeout(() => {
-            successMessage.remove();
-        }, 5000);
+        existingUsers.push(userData);
+        localStorage.setItem('users', JSON.stringify(existingUsers));
+    }
+
+    function simulateServerSubmission(data) {
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve({ status: 200, message: 'Sucesso', data });
+            }, 1000);
+        });
     }
 });
+
+// Código para mostrar mensagem na página de login
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.location.pathname.includes('login.html')) {
+        if (localStorage.getItem('showRegistrationSuccess') === 'true') {
+            showSuccessMessage();
+            localStorage.removeItem('showRegistrationSuccess');
+        }
+    }
+});
+
+function showSuccessMessage() {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'alert alert-success';
+    messageDiv.innerHTML = '<i class="fas fa-check-circle"></i> Usuário cadastrado com sucesso!';
+    
+    const main = document.querySelector('main');
+    if (main) {
+        main.insertBefore(messageDiv, main.firstChild);
+        setTimeout(() => messageDiv.remove(), 5000);
+    }
+}
