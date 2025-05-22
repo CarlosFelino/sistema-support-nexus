@@ -1,216 +1,210 @@
+// data.js - Dados simulados para o sistema Support Nexus
+
 // Dados de usuários
 const users = [
   {
-    employeeId: "12345",
-    fullName: "Carlos Alexandre Andrade De Sousa",
-    birthDate: "2007-06-04",
-    email: "carlos@fatec.sp.gov.br",
-    phone: "(11) 98765-4321",
-    password: "senha123",
-    userType: "professor",
-    registrationDate: "2025-01-15"
-  },
+    "employeeId": "12345",
+    "fullName": "Carlos Alexandre",
+    "birthDate": "2007-06-04",
+    "email": "carlos@fatec.sp.gov.br",
+    "phone": "(11) 98765-4321",
+    "password": "senha123",
+    "userType": "professor",
+    "registrationDate": "2025-01-15"
+},
   {
-    employeeId: "54321",
-    fullName: "Thalía Saldanha",
-    birthDate: "1990-05-20",
-    email: "thalia@fatec.sp.gov.br",
-    phone: "(11) 91234-5678",
-    password: "suporte123",
-    userType: "suporte",
-    registrationDate: "2025-01-10"
-  },
-  {
-    employeeId: "67890",
-    fullName: "Vitória Regia",
-    birthDate: "1992-08-15",
-    email: "vitoria@fatec.sp.gov.br",
-    phone: "(11) 92345-6789",
-    password: "suporte456",
-    userType: "suporte",
-    registrationDate: "2025-01-12"
-  }
+    "employeeId": "67890",
+    "fullName": "Thalia Saldanha",
+    "birthDate": "2007-06-04",
+    "email": "thalia@fatec.sp.gov.br",
+    "phone": "(11) 98765-4321",
+    "password": "suporte123",
+    "userType": "suporte",
+    "registrationDate": "2025-01-10"
+}
 ];
 
-// Dados de ordens de serviço
-const orders = [
-  {
-    id: "ORD-2025-001",
-    title: "Problema no Projetor - Sala 103",
-    description: "Projetor não está exibindo imagem corretamente",
-    status: "pending",
-    date: "2025-05-15",
-    requesterId: "12345",
-    requesterName: "Carlos Alexandre Andrade De Sousa",
-    location: "Sala 103",
-    equipment: "Projetor",
-    priority: "medium",
-    assignedTo: null
-  },
-  {
-    id: "ORD-2025-002",
-    title: "Computador não liga - Lab 205",
-    description: "Posição 12 não está respondendo ao ligar",
-    status: "in-progress",
-    date: "2025-05-16",
-    requesterId: "12345",
-    requesterName: "Carlos Alexandre Andrade De Sousa",
-    location: "Laboratório 205",
-    equipment: "Computador Posição 12",
-    priority: "high",
-    assignedTo: "54321"
-  },
-  {
-    id: "ORD-2025-003",
-    title: "Internet lenta - Sala 201",
-    description: "Conexão está muito lenta durante as aulas",
-    status: "completed",
-    date: "2025-05-10",
-    requesterId: "12345",
-    requesterName: "Carlos Alexandre Andrade De Sousa",
-    location: "Sala 201",
-    equipment: "Roteador Wi-Fi",
-    priority: "low",
-    assignedTo: "54321",
-    solution: "Reset do roteador principal",
-    completedDate: "2025-05-12"
-  }
-];
+// Dados de laboratórios
+const labs = {
+  "202": { capacity: 30, type: "desktop" },
+  "203": { capacity: 30, type: "desktop" },
+  "204": { capacity: 30, type: "desktop" },
+  "205": { capacity: 30, type: "desktop" },
+  "206": { capacity: 30, type: "desktop" },
+  "207": { capacity: 30, type: "desktop" },
+  "208": { capacity: 15, type: "desktop" },
+  "209": { capacity: 21, type: "notebook" },
+  "210": { capacity: 30, type: "notebook" },
+  "211": { capacity: 30, type: "notebook" },
+  "213": { capacity: 30, type: "notebook" },
+  "214": { capacity: 30, type: "notebook" },
+  "215": { capacity: 30, type: "notebook" }
+};
 
-// Inicializar localStorage com dados de exemplo
+// Dados de equipamentos e problemas
+const equipmentConfig = {
+  "classroom": {
+    "equipments": [
+      { "value": "kit-professor", "label": "Kit Professor (ThinkCentre + ThinkVision)" },
+      { "value": "cabo-internet", "label": "Cabo de Internet" },
+      { "value": "keystone", "label": "Keystone" },
+      { "value": "hdmi", "label": "Cabo HDMI" },
+      { "value": "displayport", "label": "Cabo DisplayPort" },
+      { "value": "tv", "label": "TV" },
+      { "value": "mouse", "label": "Mouse" },
+      { "value": "teclado", "label": "Teclado" },
+      { "value": "outro", "label": "Outro Equipamento" }
+    ],
+    "problems": {
+      "kit-professor": [
+        { "value": "sem-internet", "label": "Sem conexão com a internet" },
+        { "value": "nao-liga", "label": "Equipamento não liga" },
+        { "value": "monitor-nao-liga", "label": "Monitor não liga" },
+        { "value": "nao-espelha", "label": "Não está espelhando na TV" },
+        { "value": "lento", "label": "Computador muito lento" },
+        { "value": "outro", "label": "Outro problema" }
+      ],
+      "default": [
+        { "value": "nao-funciona", "label": "Equipamento não funciona" },
+        { "value": "danificado", "label": "Equipamento danificado" },
+        { "value": "falta", "label": "Equipamento faltando" },
+        { "value": "outro", "label": "Outro problema" }
+      ]
+    }
+  },
+  "lab-desktop": {
+    "equipments": [
+      { "value": "kit-professor", "label": "Kit Professor" },
+      { "value": "kit-aluno", "label": "Kit Aluno (Desktop)" },
+      { "value": "monitor-lg", "label": "Monitor LG" },
+      { "value": "monitor-thinkvision", "label": "Monitor ThinkVision" },
+      { "value": "monitor-hp", "label": "Monitor HP" },
+      { "value": "monitor-aoc", "label": "Monitor AOC" },
+      { "value": "gabinete-thinkcentre", "label": "Gabinete ThinkCentre" },
+      { "value": "gabinete-hp", "label": "Gabinete HP ProDesk" },
+      { "value": "cabo-vga", "label": "Cabo VGA" },
+      { "value": "outro", "label": "Outro Equipamento" }
+    ],
+    "problems": {
+      "kit-professor": [
+        { "value": "sem-internet", "label": "Sem conexão com a internet" },
+        { "value": "nao-liga", "label": "Equipamento não liga" },
+        { "value": "monitor-nao-liga", "label": "Monitor não liga" },
+        { "value": "nao-espelha", "label": "Não está espelhando na TV" },
+        { "value": "lento", "label": "Computador muito lento" },
+        { "value": "outro", "label": "Outro problema" }
+      ],
+      "kit-aluno": [
+        { "value": "sem-internet", "label": "Sem conexão com a internet" },
+        { "value": "nao-liga", "label": "Computador não liga" },
+        { "value": "monitor-nao-liga", "label": "Monitor não liga" },
+        { "value": "sem-video", "label": "Sem sinal de vídeo" },
+        { "value": "lento", "label": "Computador muito lento" },
+        { "value": "outro", "label": "Outro problema" }
+      ],
+      "default": [
+        { "value": "nao-funciona", "label": "Equipamento não funciona" },
+        { "value": "danificado", "label": "Equipamento danificado" },
+        { "value": "falta", "label": "Equipamento faltando" },
+        { "value": "outro", "label": "Outro problema" }
+      ]
+    }
+  },
+  "lab-notebook": {
+    "equipments": [
+      { "value": "kit-professor", "label": "Kit Professor" },
+      { "value": "thinkpad-l14", "label": "Notebook ThinkPad L14 Gen2" },
+      { "value": "thinkpad-e14", "label": "Notebook ThinkPad E14 Gen2" },
+      { "value": "positivo", "label": "Notebook Positivo" },
+      { "value": "outro", "label": "Outro Equipamento" }
+    ],
+    "problems": {
+      "thinkpad-l14": [
+        { "value": "sem-internet", "label": "Sem conexão com a internet" },
+        { "value": "nao-liga", "label": "Notebook não liga" },
+        { "value": "bateria", "label": "Problema com a bateria" },
+        { "value": "teclado", "label": "Problema com o teclado" },
+        { "value": "tela", "label": "Problema com a tela" },
+        { "value": "outro", "label": "Outro problema" }
+      ],
+      "default": [
+        { "value": "nao-funciona", "label": "Equipamento não funciona" },
+        { "value": "danificado", "label": "Equipamento danificado" },
+        { "value": "falta", "label": "Equipamento faltando" },
+        { "value": "outro", "label": "Outro problema" }
+      ]
+    }
+  },
+  "app": {
+    "problems": [
+      { "value": "falta-app", "label": "Aplicativo não instalado" },
+      { "value": "app-nao-funciona", "label": "Aplicativo não funciona" },
+      { "value": "app-lento", "label": "Aplicativo muito lento" },
+      { "value": "atualizacao", "label": "Precisa de atualização" },
+      { "value": "outro", "label": "Outro problema" }
+    ]
+  }
+};
+
+
+// Inicializar localStorage
 function initializeLocalStorage() {
-  if (!localStorage.getItem('users')) {
+  if (!localStorage.getItem('appInitialized')) {
     localStorage.setItem('users', JSON.stringify(users));
-  }
-  
-  if (!localStorage.getItem('orders')) {
     localStorage.setItem('orders', JSON.stringify(orders));
+    localStorage.setItem('appInitialized', 'true');
   }
 }
 
-// Funções de simulação de API
-const api = {
-  // Simular login
+// API Simulada
+const mockApi = {
+  // Autenticação
   login: (email, password) => {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const user = users.find(u => u.email === email && u.password === password);
-    
     return new Promise((resolve, reject) => {
       setTimeout(() => {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const user = users.find(u => u.email === email && u.password === password);
+        
         if (user) {
-          // Criar token simples (em produção, usar JWT)
-          const token = `fake-jwt-token-${Math.random().toString(36).substr(2)}-${Date.now().toString(36)}`;
-          
-          // Salvar dados do usuário logado
-          localStorage.setItem('authToken', token);
-          localStorage.setItem('currentUser', JSON.stringify({
+          const token = `fake-jwt-${Math.random().toString(36).substr(2, 9)}`;
+          const currentUser = {
             id: user.employeeId,
             name: user.fullName,
             email: user.email,
             type: user.userType
-          }));
+          };
+          
+          localStorage.setItem('authToken', token);
+          localStorage.setItem('currentUser', JSON.stringify(currentUser));
           
           resolve({
             success: true,
+            token,
             userType: user.userType,
-            token: token
+            userData: currentUser
           });
         } else {
           reject({
             success: false,
-            message: 'Email ou senha incorretos'
+            message: 'Credenciais inválidas'
           });
         }
-      }, 800); // Simular atraso de rede
+      }, 800);
     });
   },
-  
-  // Recuperação de senha
-  requestPasswordReset: (email) => {
-    const users = JSON.parse(localStorage.getItem('users')) || [];
-    const userExists = users.some(u => u.email === email);
-    
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: userExists,
-          message: userExists 
-            ? 'Link de recuperação enviado para seu email' 
-            : 'Email não cadastrado no sistema'
-        });
-      }, 1000);
-    });
-  },
-  
-  // Obter ordens por usuário
-  getOrdersByUser: (userId) => {
-    const allOrders = JSON.parse(localStorage.getItem('orders')) || [];
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(allOrders.filter(order => order.requesterId === userId));
-      }, 500);
-    });
-  },
-  
-  // Obter todas as ordens (para suporte)
-  getAllOrders: () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(JSON.parse(localStorage.getItem('orders')) || []);
-      }, 500);
-    });
-  },
-  
-  // Criar nova ordem
-  createOrder: (newOrder) => {
+
+  // Obter ordens do professor
+  getProfessorOrders: (professorId) => {
     return new Promise((resolve) => {
       setTimeout(() => {
         const orders = JSON.parse(localStorage.getItem('orders')) || [];
-        const orderId = `ORD-${new Date().getFullYear()}-${(orders.length + 1).toString().padStart(3, '0')}`;
-        
-        const orderToAdd = {
-          ...newOrder,
-          id: orderId,
-          date: new Date().toISOString(),
-          status: 'pending'
-        };
-        
-        const updatedOrders = [...orders, orderToAdd];
-        localStorage.setItem('orders', JSON.stringify(updatedOrders));
-        
-        resolve(orderToAdd);
-      }, 700);
-    });
-  },
-  
-  // Atualizar ordem
-  updateOrder: (orderId, updates) => {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        const orders = JSON.parse(localStorage.getItem('orders')) || [];
-        const orderIndex = orders.findIndex(o => o.id === orderId);
-        
-        if (orderIndex === -1) {
-          reject({ success: false, message: 'Ordem não encontrada' });
-          return;
-        }
-        
-        const updatedOrder = {
-          ...orders[orderIndex],
-          ...updates
-        };
-        
-        const updatedOrders = [...orders];
-        updatedOrders[orderIndex] = updatedOrder;
-        localStorage.setItem('orders', JSON.stringify(updatedOrders));
-        
-        resolve(updatedOrder);
+        resolve(orders.filter(order => order.requesterId === professorId));
       }, 600);
     });
   },
-  
-  // Obter usuário por ID
-  getUserById: (userId) => {
+
+  // Obter detalhes do usuário
+  getUserProfile: (userId) => {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         const users = JSON.parse(localStorage.getItem('users')) || [];
@@ -221,13 +215,68 @@ const api = {
         } else {
           reject('Usuário não encontrado');
         }
-      }, 400);
+      }, 500);
+    });
+  },
+
+  // Atualizar perfil do usuário
+  updateUserProfile: (userId, updates) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const userIndex = users.findIndex(u => u.employeeId === userId);
+        
+        if (userIndex === -1) {
+          reject('Usuário não encontrado');
+          return;
+        }
+        
+        const updatedUser = { ...users[userIndex], ...updates };
+        const updatedUsers = [...users];
+        updatedUsers[userIndex] = updatedUser;
+        
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
+        
+        // Atualizar currentUser se for o mesmo usuário
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser && currentUser.id === userId) {
+          localStorage.setItem('currentUser', JSON.stringify({
+            ...currentUser,
+            name: updates.fullName || currentUser.name,
+            email: updates.email || currentUser.email
+          }));
+        }
+        
+        resolve(updatedUser);
+      }, 700);
+    });
+  },
+
+  // Métodos adicionais para o painel
+  getOrderStats: (userId) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        const orders = JSON.parse(localStorage.getItem('orders')) || [];
+        const userOrders = orders.filter(o => o.requesterId === userId);
+        
+        const stats = {
+          total: userOrders.length,
+          pending: userOrders.filter(o => o.status === 'pending').length,
+          inProgress: userOrders.filter(o => o.status === 'in-progress').length,
+          completed: userOrders.filter(o => o.status === 'completed').length,
+          recent: [...userOrders]
+            .sort((a, b) => new Date(b.date) - new Date(a.date))
+            .slice(0, 3)
+        };
+        
+        resolve(stats);
+      }, 500);
     });
   }
 };
 
-// Inicializar dados ao carregar o script
+// Inicializar dados
 initializeLocalStorage();
 
-// Exportar a API de simulação
-window.mockApi = api;
+// Exportar para uso global
+window.mockApi = mockApi;

@@ -6,7 +6,63 @@ document.addEventListener('DOMContentLoaded', function() {
     const personalDataForm = document.getElementById('personal-data-form');
     const passwordForm = document.getElementById('password-form');
     const togglePasswordBtns = document.querySelectorAll('.toggle-password');
-    
+    const userType = document.body.classList.contains('professor-dashboard') ? 'professor' : 'suporte';
+
+    // Carregar dados do usuário do localStorage
+    function loadUserData() {
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        
+        if (!currentUser) {
+            window.location.href = '../../login.html';
+            return;
+        }
+
+        // Encontrar usuário completo na lista de usuários
+        const userData = users.find(u => u.employeeId === currentUser.id) || {
+            employeeId: currentUser.id,
+            fullName: currentUser.name,
+            email: currentUser.email,
+            userType: currentUser.type,
+            birthDate: '2000-01-01',
+            phone: '(00) 00000-0000'
+        };
+
+        // Preencher formulário
+        document.getElementById('registration').value = userData.employeeId;
+        document.getElementById('fullname').value = userData.fullName;
+        document.getElementById('email').value = userData.email;
+        document.getElementById('birthdate').value = userData.birthDate || '';
+        document.getElementById('phone').value = userData.phone || '';
+        
+        // Atualizar navbar
+        updateNavbarProfile(userData);
+    }
+
+    // Atualizar navbar com dados do usuário
+    function updateNavbarProfile(userData) {
+        const navProfileImg = document.querySelector('.profile-dropdown .profile-avatar');
+        const userNameElement = document.querySelector('.user-name');
+        const userEmailElement = document.querySelector('.user-email');
+        
+        // Carregar foto do localStorage ou usar padrão
+        const photoUrl = localStorage.getItem(`userPhoto_${userData.employeeId}`) || 
+                        '../../assets/images/default-avatar.png';
+        
+        if (navProfileImg) navProfileImg.src = photoUrl;
+        
+        // Atualizar nome e email
+        if (userNameElement) {
+            userNameElement.textContent = 
+                userType === 'professor' ? `Prof. ${userData.fullName.split(' ')[0]}` 
+                                       : `Téc. ${userData.fullName.split(' ')[0]}`;
+        }
+        
+        if (userEmailElement) {
+            userEmailElement.textContent = userData.email;
+        }
+    }
+
     // Foto de Perfil
     photoInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
@@ -19,16 +75,34 @@ document.addEventListener('DOMContentLoaded', function() {
             const reader = new FileReader();
             reader.onload = function(event) {
                 profilePreview.src = event.target.result;
-                // Aqui você pode adicionar código para salvar a imagem no servidor
+                // Salvar no localStorage
+                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+                if (currentUser) {
+                    localStorage.setItem(`userPhoto_${currentUser.id}`, event.target.result);
+                    
+                    // Atualizar navbar
+                    const navProfileImg = document.querySelector('.profile-dropdown .profile-avatar');
+                    if (navProfileImg) navProfileImg.src = event.target.result;
+                }
             };
             reader.readAsDataURL(file);
         }
     });
     
     removePhotoBtn.addEventListener('click', function() {
-        profilePreview.src = '../../assets/images/default-avatar.png';
+        const defaultPhoto = '../../assets/images/default-avatar.png';
+        profilePreview.src = defaultPhoto;
         photoInput.value = '';
-        // Aqui você pode adicionar código para remover a imagem no servidor
+        
+        // Remover do localStorage
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (currentUser) {
+            localStorage.removeItem(`userPhoto_${currentUser.id}`);
+            
+            // Atualizar navbar
+            const navProfileImg = document.querySelector('.profile-dropdown .profile-avatar');
+            if (navProfileImg) navProfileImg.src = defaultPhoto;
+        }
     });
     
     // Mostrar/Esconder Senha
@@ -60,16 +134,46 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Aqui você pode adicionar código para salvar os dados no servidor
-        console.log('Dados pessoais atualizados:', {
-            registration: document.getElementById('registration').value,
-            fullname: document.getElementById('fullname').value,
-            email: document.getElementById('email').value,
-            birthdate: document.getElementById('birthdate').value,
-            phone: document.getElementById('phone').value
-        });
+        // Obter dados atuais
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const userIndex = users.findIndex(u => u.employeeId === currentUser.id);
         
-        alert('Dados pessoais atualizados com sucesso!');
+        if (userIndex === -1) {
+            alert('Usuário não encontrado');
+            return;
+        }
+        
+        // Criar objeto com dados atualizados
+        const updatedData = {
+            ...users[userIndex], // Mantém os dados existentes
+            employeeId: document.getElementById('registration').value,
+            fullName: document.getElementById('fullname').value,
+            email: document.getElementById('email').value,
+            birthDate: document.getElementById('birthdate').value,
+            phone: document.getElementById('phone').value
+        };
+        
+        // Atualizar lista de usuários
+        const updatedUsers = [...users];
+        updatedUsers[userIndex] = updatedData;
+        
+        // Salvar no localStorage
+        localStorage.setItem('users', JSON.stringify(updatedUsers));
+        
+        // Atualizar currentUser
+        localStorage.setItem('currentUser', JSON.stringify({
+            id: updatedData.employeeId,
+            name: updatedData.fullName,
+            email: updatedData.email,
+            type: userType
+        }));
+        
+        // Atualizar navbar
+        updateNavbarProfile(updatedData);
+        
+        // Feedback
+        showFeedback('Dados pessoais atualizados com sucesso!', 'success');
     });
     
     // Formulário de Senha
@@ -82,23 +186,33 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Validações
         if (newPassword.length < 6) {
-            alert('A nova senha deve ter no mínimo 6 caracteres');
+            showFeedback('A nova senha deve ter no mínimo 6 caracteres', 'error');
             return;
         }
         
         if (newPassword !== confirmPassword) {
-            alert('As senhas não coincidem');
+            showFeedback('As senhas não coincidem', 'error');
             return;
         }
         
-        // Simulação de verificação da senha atual (substituir por chamada real à API)
-        if (currentPassword !== "senha_atual_secreta") { // Isso é apenas para demonstração
-            alert('Senha atual incorreta');
+        // Verificar senha atual
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const users = JSON.parse(localStorage.getItem('users')) || [];
+        const userIndex = users.findIndex(u => u.employeeId === currentUser.id);
+        
+        if (userIndex === -1) {
+            showFeedback('Usuário não encontrado', 'error');
+            return;
+        }
+        
+        if (users[userIndex].password !== currentPassword) {
+            showFeedback('Senha atual incorreta', 'error');
             return;
         }
 
-        // Simulação de atualização da senha (substituir por chamada real à API)
-        console.log('Senha alterada para:', newPassword);
+        // Atualizar senha
+        users[userIndex].password = newPassword;
+        localStorage.setItem('users', JSON.stringify(users));
         
         // Feedback visual
         const submitBtn = this.querySelector('button[type="submit"]');
@@ -133,46 +247,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Carregar dados do usuário (simulação)
-    function loadUserData() {
-        // Em uma aplicação real, isso viria de uma API
-        const userData = {
-            registration: '12345',
-            fullname: 'Carlos Alexandre Andrade De Sousa',
-            email: 'carlos.sousa25@fatec.sp.gov.br',
-            birthdate: '2007-06-04',
-            phone: '(11) 98765-4321',
-            photo: '../../assets/images/default-avatar.png'
-        };
-
-        // Preencher formulário
-        document.getElementById('registration').value = userData.registration;
-        document.getElementById('fullname').value = userData.fullname;
-        document.getElementById('email').value = userData.email;
-        document.getElementById('birthdate').value = userData.birthdate;
-        document.getElementById('phone').value = userData.phone;
-        profilePreview.src = userData.photo;
-    }
-
-    // Atualizar navbar com foto do perfil
-    function updateNavbarProfile() {
-        const navProfileImg = document.querySelector('.profile-dropdown .profile-avatar');
-        navProfileImg.src = profilePreview.src;
+    // Mostrar feedback ao usuário
+    function showFeedback(message, type) {
+        const feedbackElement = document.createElement('div');
+        feedbackElement.className = `profile-feedback ${type}`;
+        feedbackElement.innerHTML = `
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+            <span>${message}</span>
+        `;
+        
+        document.body.appendChild(feedbackElement);
+        
+        setTimeout(() => {
+            feedbackElement.classList.add('fade-out');
+            setTimeout(() => feedbackElement.remove(), 500);
+        }, 3000);
     }
 
     // Inicialização
     loadUserData();
-
-    // Observar mudanças na foto para atualizar navbar
-    const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(mutation) {
-            if (mutation.attributeName === 'src') {
-                updateNavbarProfile();
-            }
-        });
-    });
-
-    observer.observe(profilePreview, {
-        attributes: true
-    });
 });

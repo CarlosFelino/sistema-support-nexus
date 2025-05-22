@@ -46,7 +46,13 @@
         <nav class="sidebar-nav">
             <ul>
                 <li>
-                    <a href="criar-ordem.html" class="active">
+                    <a href="painel-professor.html" class="active">
+                        <i class="fas fa-home"></i>
+                        <span>Início</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="criar-ordem.html">
                         <i class="fas fa-plus-circle"></i>
                         <span>Criar Ordem</span>
                     </a>
@@ -55,6 +61,12 @@
                     <a href="minhas-ordens.html">
                         <i class="fas fa-list-ul"></i>
                         <span>Minhas Ordens</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="perfil-professor.html">
+                        <i class="fas fa-user-cog"></i>
+                        <span>Meu Perfil</span>
                     </a>
                 </li>
             </ul>
@@ -163,11 +175,6 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="position">Posição (Opcional)</label>
-                        <input type="text" id="position" name="position" placeholder="Ex: Posição 12">
-                    </div>
-
-                    <div class="form-group">
                         <label for="computer-type">Tipo de Computador</label>
                         <select id="computer-type" name="computer-type">
                             <option value="">Selecione...</option>
@@ -175,8 +182,29 @@
                             <option value="notebook">Notebook</option>
                         </select>
                     </div>
+
+                    <!-- Nova seção para seleção de posições com botões -->
+                    <div class="form-group" id="position-selection" style="display: none;">
+                        <div class="position-selection-header">
+                            <label>Selecione as posições:</label>
+                            <button type="button" class="btn btn-outline select-all-btn">
+                                <i class="fas fa-check-double"></i> Selecionar Todas
+                            </button>
+                            <button type="button" class="btn btn-outline deselect-all-btn">
+                                <i class="fas fa-times-circle"></i> Desselecionar Todas
+                            </button>
+                        </div>
+                        
+                        <div class="positions-grid">
+                            <!-- As posições serão geradas dinamicamente via JavaScript -->
+                        </div>
+                        
+                        <div class="selected-positions-info">
+                            <span class="selected-count">Nenhuma posição selecionada</span>
+                            <span class="selected-list"></span>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
             <!-- Seção de Problema -->
             <div id="problem-section" class="form-section">
@@ -254,7 +282,7 @@
             </div>
         </form>
     </main>
-
+    <script src="../../assets/js/data.js"></script>
     <script src="../../assets/js/professor.js"></script>
     <script src="../../assets/js/criar-ordem.js"></script>
 </body>

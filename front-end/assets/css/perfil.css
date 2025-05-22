@@ -224,6 +224,70 @@
     background: #f8f9fa;
 }
 
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--secondary);
+    text-decoration: none;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.back-link i {
+    margin-right: 0.5rem;
+    transition: transform 0.2s;
+}
+
+.back-link:hover {
+    color: var(--accent);
+}
+
+.back-link:hover i {
+    transform: translateX(-3px);
+}
+
+/* Feedback Styles */
+.profile-feedback {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    animation: slide-in 0.3s ease-out;
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.profile-feedback.success {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.profile-feedback.error {
+    background-color: #F44336;
+    color: white;
+}
+
+.profile-feedback.fade-out {
+    opacity: 0;
+}
+
+@keyframes slide-in {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
     .photo-upload {

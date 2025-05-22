@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Elementos do DOM
     const registerForm = document.querySelector('.cadastro-container');
-    const typeButtons = document.querySelectorAll('.type-btn');
     const showPasswordBtns = document.querySelectorAll('.show-password');
     const passwordInput = document.getElementById('password');
     const confirmPasswordInput = document.getElementById('confirmPassword');
@@ -19,14 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
             e.target.value = formattedValue;
         });
     }
-
-    // Toggle de tipo de usuário
-    typeButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            typeButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
 
     // Mostrar/ocultar senha
     showPasswordBtns.forEach(btn => {
@@ -68,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Criar objeto com os dados do formulário
                 const formData = {
-                    userType: document.querySelector('.type-btn.active').dataset.type,
+                    userType: 'professor', // Tipo fixo como professor
                     employeeId: document.getElementById('employeeId').value,
                     fullName: document.getElementById('fullName').value,
                     birthDate: document.getElementById('birthDate').value,

@@ -1,151 +1,211 @@
-document.addEventListener('DOMContentLoaded', function() {
+class ProfessorDashboard {
+  constructor() {
+    this.init();
+  }
+
+  async init() {
     // Verificar autenticação
-    const authToken = localStorage.getItem('authToken');
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+    if (!this.checkAuth()) {
+      window.location.href = '../../login.html';
+      return;
+    }
+
+    // Carregar dados do usuário
+    this.currentUser = JSON.parse(localStorage.getItem('currentUser'));
     
-    if (!authToken || !currentUser) {
-        window.location.href = '../../login.html';
-        return;
-    }
+    // Configurar UI
+    this.setupUI();
+    
+    // Carregar dados do dashboard
+    await this.loadDashboardData();
+  }
 
-    // Atualizar informações do usuário na navbar
-    document.querySelector('.user-name').textContent = `Prof. ${currentUser.name.split(' ')[0]}`;
-    document.querySelector('.user-email').textContent = currentUser.email;
+  checkAuth() {
+    const authToken = localStorage.getItem('authToken');
+    const currentUser = localStorage.getItem('currentUser');
+    return authToken && currentUser;
+  }
 
-    // Carregar foto do perfil se existir
-    const userPhoto = localStorage.getItem(`userPhoto_${currentUser.id}`);
-    if (userPhoto) {
-        document.querySelector('.profile-avatar').src = userPhoto;
-    }
+  setupUI() {
+    // Menu hamburguer
+    this.menuToggle = document.querySelector('.menu-toggle');
+    this.sidebar = document.querySelector('.sidebar');
+    this.overlay = document.createElement('div');
+    this.overlay.className = 'overlay';
+    document.body.appendChild(this.overlay);
 
-    // Controle do Menu Lateral
-    const menuToggle = document.querySelector('.menu-toggle');
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.createElement('div');
-    overlay.className = 'overlay';
-    document.body.appendChild(overlay);
+    this.menuToggle.addEventListener('click', () => this.toggleMenu());
+    this.overlay.addEventListener('click', () => this.closeMenu());
 
-    menuToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
+    // Dropdown do perfil
+    this.profileDropdown = document.querySelector('.dropdown-content');
+    this.profileAvatar = document.querySelector('.profile-avatar');
+    this.profileAvatar.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.toggleProfileDropdown();
     });
 
-    overlay.addEventListener('click', () => {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-    });
-
-    // Clicar no perfil
-    let dropdownVisible = false;
-    document.querySelector('.profile-avatar').addEventListener('click', (e) => {
-        e.stopPropagation();
-        const dropdown = document.querySelector('.dropdown-content');
-        dropdownVisible = !dropdownVisible;
-        dropdown.style.display = dropdownVisible ? 'block' : 'none';
-    });
-
-    // Fechar ao clicar fora
-    document.addEventListener('click', () => {
-        if(dropdownVisible) {
-            document.querySelector('.dropdown-content').style.display = 'none';
-            dropdownVisible = false;
-        }
-    });
+    document.addEventListener('click', () => this.closeProfileDropdown());
 
     // Logout
-    document.getElementById('logout').addEventListener('click', function(e) {
-        e.preventDefault();
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('currentUser');
-        window.location.href = '../../index.html';
+    document.getElementById('logout').addEventListener('click', (e) => {
+      e.preventDefault();
+      this.logout();
     });
+  }
 
-    // Carregar ordens do professor
-    loadProfessorOrders();
+  async loadDashboardData() {
+    try {
+      // Atualizar informações do usuário
+      await this.updateUserProfile();
+      
+      // Carregar estatísticas das ordens
+      const stats = await mockApi.getOrderStats(this.currentUser.id);
+      
+      // Atualizar UI com os dados
+      this.updateWelcomeMessage(stats);
+      this.updateQuickActions(stats);
+      this.displayRecentOrders(stats.recent);
+    } catch (error) {
+      console.error('Erro ao carregar dados:', error);
+      this.showError('Erro ao carregar dados do dashboard');
+    }
+  }
+
+  async updateUserProfile() {
+    try {
+      const userData = await mockApi.getUserProfile(this.currentUser.id);
+      
+      // Atualizar navbar
+      document.querySelector('.user-name').textContent = `Prof. ${userData.fullName.split(' ')[0]}`;
+      document.querySelector('.user-email').textContent = userData.email;
+      
+      // Carregar foto se existir
+      const userPhoto = localStorage.getItem(`userPhoto_${this.currentUser.id}`) || 
+                       '../../assets/images/default-avatar.png';
+      this.profileAvatar.src = userPhoto;
+    } catch (error) {
+      console.error('Erro ao carregar perfil:', error);
+    }
+  }
+
+  updateWelcomeMessage(stats) {
+    const welcomeBanner = document.querySelector('.welcome-banner h1');
+    if (!welcomeBanner) return;
+    
+    if (stats.pending > 0) {
+      welcomeBanner.textContent = `Bem-vindo, Professor! Você tem ${stats.pending} ${stats.pending === 1 ? 'ordem pendente' : 'ordens pendentes'}`;
+    } else if (stats.inProgress > 0) {
+      welcomeBanner.textContent = `Bem-vindo! Você tem ${stats.inProgress} ${stats.inProgress === 1 ? 'ordem em andamento' : 'ordens em andamento'}`;
+    } else {
+      welcomeBanner.textContent = 'Bem-vindo, Professor! Tudo em ordem por aqui.';
+    }
+  }
+
+  updateQuickActions(stats) {
+    // Atualizar badge de ordens pendentes
+    const pendingBadge = document.querySelector('.action-card:nth-child(2) .card-badge');
+    if (pendingBadge) {
+      pendingBadge.textContent = `${stats.pending} ${stats.pending === 1 ? 'pendente' : 'pendentes'}`;
+    }
+  }
+
+  displayRecentOrders(orders) {
+    const ordersGrid = document.querySelector('.orders-grid');
+    if (!ordersGrid) return;
+    
+    ordersGrid.innerHTML = '';
+    
+    if (orders.length === 0) {
+      ordersGrid.innerHTML = '<p class="no-orders">Nenhuma ordem recente encontrada</p>';
+      return;
+    }
+    
+    orders.forEach(order => {
+      const orderCard = document.createElement('div');
+      orderCard.className = `order-card status-${order.status.replace(' ', '-')}`;
+      orderCard.innerHTML = this.createOrderCardHTML(order);
+      ordersGrid.appendChild(orderCard);
+    });
+  }
+
+  createOrderCardHTML(order) {
+    const formattedDate = this.formatDate(order.date);
+    const statusInfo = this.getStatusInfo(order.status);
+    
+    return `
+      <div class="order-header">
+        <span class="order-id">#${order.id}</span>
+        <span class="order-date">${formattedDate}</span>
+      </div>
+      <h3>${order.title}</h3>
+      <p class="order-description">${order.description.substring(0, 80)}${order.description.length > 80 ? '...' : ''}</p>
+      <div class="order-footer">
+        <span class="order-status">
+          <i class="fas ${statusInfo.icon}"></i> 
+          ${statusInfo.text}
+        </span>
+        <a href="minhas-ordens.html?order=${order.id}" class="order-details">Ver detalhes</a>
+      </div>
+    `;
+  }
+
+  getStatusInfo(status) {
+    const statusMap = {
+      'pending': { icon: 'fa-clock', text: 'Pendente', color: '#FF9800' },
+      'in-progress': { icon: 'fa-spinner', text: 'Em Andamento', color: '#2196F3' },
+      'completed': { icon: 'fa-check-circle', text: 'Concluído', color: '#4CAF50' }
+    };
+    
+    return statusMap[status] || { icon: 'fa-question-circle', text: status, color: '#9E9E9E' };
+  }
+
+  formatDate(dateString) {
+    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
+    return new Date(dateString).toLocaleDateString('pt-BR', options);
+  }
+
+  toggleMenu() {
+    this.sidebar.classList.toggle('active');
+    this.overlay.classList.toggle('active');
+  }
+
+  closeMenu() {
+    this.sidebar.classList.remove('active');
+    this.overlay.classList.remove('active');
+  }
+
+  toggleProfileDropdown() {
+    this.profileDropdown.style.display = 
+      this.profileDropdown.style.display === 'block' ? 'none' : 'block';
+  }
+
+  closeProfileDropdown() {
+    this.profileDropdown.style.display = 'none';
+  }
+
+  logout() {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('currentUser');
+    window.location.href = '../../index.html';
+  }
+
+  showError(message) {
+    const errorElement = document.createElement('div');
+    errorElement.className = 'dashboard-error';
+    errorElement.innerHTML = `
+      <i class="fas fa-exclamation-circle"></i>
+      <span>${message}</span>
+    `;
+    document.body.prepend(errorElement);
+    
+    setTimeout(() => {
+      errorElement.remove();
+    }, 5000);
+  }
+}
+
+// Inicializar o dashboard quando o DOM estiver carregado
+document.addEventListener('DOMContentLoaded', () => {
+  new ProfessorDashboard();
 });
-
-function loadProfessorOrders() {
-    // Obter ordens do localStorage (simulação)
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
-    const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-    
-    // Filtrar ordens do professor atual
-    const professorOrders = orders.filter(order => 
-        order.requesterId === currentUser.id
-    );
-
-    // Atualizar contadores
-    updateOrderCounters(professorOrders);
-    
-    // Exibir ordens recentes
-    displayRecentOrders(professorOrders);
-}
-
-function updateOrderCounters(orders) {
-    const pendingCount = orders.filter(o => o.status === 'pending').length;
-    const inProgressCount = orders.filter(o => o.status === 'in-progress').length;
-    
-    // Atualizar badges
-    document.querySelector('.action-card:nth-child(2) .card-badge').textContent = 
-        `${pendingCount} ${pendingCount === 1 ? 'pendente' : 'pendentes'}`;
-    
-    document.querySelector('.action-card:nth-child(3) .card-badge').textContent = 
-        `${inProgressCount} ${inProgressCount === 1 ? 'em andamento' : 'em andamento'}`;
-}
-
-function displayRecentOrders(orders) {
-    const recentOrdersContainer = document.querySelector('.orders-grid');
-    recentOrdersContainer.innerHTML = '';
-    
-    // Ordenar por data (mais recente primeiro)
-    const sortedOrders = [...orders].sort((a, b) => 
-        new Date(b.date) - new Date(a.date)
-    ).slice(0, 2); // Pegar apenas as 2 mais recentes
-    
-    sortedOrders.forEach(order => {
-        const orderCard = document.createElement('div');
-        orderCard.className = `order-card status-${order.status.replace(' ', '-')}`;
-        
-        orderCard.innerHTML = `
-            <div class="order-header">
-                <span class="order-id">#${order.id}</span>
-                <span class="order-date">${formatDate(order.date)}</span>
-            </div>
-            <h3>${order.title}</h3>
-            <p class="order-description">${order.description.substring(0, 60)}${order.description.length > 60 ? '...' : ''}</p>
-            <div class="order-footer">
-                <span class="order-status">
-                    <i class="fas ${getStatusIcon(order.status)}"></i> 
-                    ${getStatusText(order.status)}
-                </span>
-                <a href="minhas-ordens.html?order=${order.id}" class="order-details">Ver detalhes</a>
-            </div>
-        `;
-        
-        recentOrdersContainer.appendChild(orderCard);
-    });
-}
-
-// Funções auxiliares
-function formatDate(dateString) {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('pt-BR');
-}
-
-function getStatusIcon(status) {
-    const icons = {
-        'pending': 'fa-clock',
-        'in-progress': 'fa-spinner',
-        'completed': 'fa-check-circle'
-    };
-    return icons[status] || 'fa-question-circle';
-}
-
-function getStatusText(status) {
-    const texts = {
-        'pending': 'Pendente',
-        'in-progress': 'Em Andamento',
-        'completed': 'Concluído'
-    };
-    return texts[status] || status;
-}

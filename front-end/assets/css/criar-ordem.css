@@ -46,6 +46,48 @@
     transform: translateX(-3px);
 }
 
+.position-selection-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.position-actions {
+    display: flex;
+    gap: 0.8rem;
+}
+
+.selected-positions-info {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px dashed var(--border-light);
+    line-height: 1.5;
+}
+
+.position-btn {
+    padding: 0.5rem;
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.position-btn:hover {
+    border-color: var(--secondary);
+}
+
+.position-btn.selected {
+    background: var(--secondary);
+    color: white;
+    border-color: var(--secondary);
+}
+
 /* Seções do Formulário */
 .form-section {
     margin-bottom: 2.5rem;
@@ -120,6 +162,84 @@ textarea:focus {
 textarea {
     min-height: 120px;
     resize: vertical;
+}
+
+/* Estilos para seleção de posições */
+.position-buttons {
+    display: flex;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-outline {
+    background: transparent;
+    border: 1px solid var(--secondary);
+    color: var(--secondary);
+}
+
+.btn-outline:hover {
+    background: rgba(122, 4, 235, 0.05);
+}
+
+.position-input-container {
+    margin-top: 1rem;
+}
+
+.position-input-container input {
+    margin-top: 0.5rem;
+}
+
+.selected-positions-display {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px dashed var(--border-light);
+}
+
+.selected-count {
+    font-weight: 500;
+    color: var(--secondary);
+    margin-right: 0.5rem;
+}
+
+.selected-list {
+    color: var(--text-medium);
+    font-size: 0.9rem;
+}
+
+/* Grid de posições (será mostrado via JS quando necessário) */
+.positions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.position-checkbox {
+    display: none;
+}
+
+.position-label {
+    display: block;
+    padding: 0.5rem;
+    text-align: center;
+    background: #fff;
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.position-checkbox:checked + .position-label {
+    background: var(--secondary);
+    color: white;
+    border-color: var(--secondary);
+}
+
+.position-label:hover {
+    border-color: var(--secondary);
 }
 
 /* Radio Buttons Personalizados */
