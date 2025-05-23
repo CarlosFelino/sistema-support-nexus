@@ -27,6 +27,129 @@ document.addEventListener('DOMContentLoaded', function() {
     let currentLabCapacity = 0;
     let selectedPositions = new Set();
     let currentLabType = 'desktop';
+    let toastTimeout;
+    let currentOrderId = null;
+
+    if (!form) {
+        console.error('Formulário não encontrado! Verifique o ID do formulário.');
+        return;
+    }
+
+    // Função para mostrar o modal de redirecionamento
+    function showRedirectModal(orderId) {
+        currentOrderId = orderId;
+        const modal = document.getElementById('redirect-modal');
+        modal.style.display = 'flex';
+        
+        // Configurar os botões do modal
+        document.getElementById('go-to-orders').onclick = () => {
+            window.location.href = 'minhas-ordens.html';
+        };
+        
+        document.getElementById('stay-here').onclick = () => {
+            modal.style.display = 'none';
+            
+            // Reset completo do formulário
+            form.reset();
+            
+            // Reset dos selects
+            equipmentTypeSelect.selectedIndex = 0;
+            problemTypeSelect.selectedIndex = 0;
+            problemTypeSelect.disabled = true;
+            
+            // Reset dos campos de texto
+            document.getElementById('problem-description').value = '';
+            document.getElementById('app-name').value = '';
+            document.getElementById('app-version').value = '';
+            document.getElementById('app-link').value = '';
+            document.getElementById('installation-notes').value = '';
+            
+            // Reset das posições
+            clearPositionSelection();
+            
+            // Reset dos arquivos
+            fileUpload.value = '';
+            fileList.innerHTML = '';
+            
+            // Reset dos radios para valores padrão
+            document.querySelector('input[name="request-type"][value="problem"]').checked = true;
+            document.querySelector('input[name="location-type"][value="classroom"]').checked = true;
+            
+            // Atualizar a UI
+            toggleRequestType();
+            toggleLocationType();
+            
+            currentOrderId = null;
+        };
+        
+        document.getElementById('go-to-dashboard').onclick = () => {
+            window.location.href = 'painel-professor.html';
+        };
+    }
+
+    // Função para mostrar toast notification
+    function showToast(message, type = 'success') {
+        // Limpar toast anterior se existir
+        const existingContainer = document.querySelector('.toast-container');
+        if (existingContainer) {
+            existingContainer.remove();
+            clearTimeout(toastTimeout);
+        }
+
+        // Criar container
+        const toastContainer = document.createElement('div');
+        toastContainer.className = 'toast-container';
+
+        // Criar toast
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        
+        // Ícone baseado no tipo
+        let iconClass;
+        switch(type) {
+            case 'success':
+                iconClass = 'fas fa-check-circle';
+                break;
+            case 'error':
+                iconClass = 'fas fa-exclamation-circle';
+                break;
+            case 'warning':
+                iconClass = 'fas fa-exclamation-triangle';
+                break;
+            default:
+                iconClass = 'fas fa-info-circle';
+        }
+
+        toast.innerHTML = `
+            <div>
+                <i class="${iconClass}"></i>
+                <span>${message}</span>
+            </div>
+            <button class="toast-close">&times;</button>
+        `;
+
+        toastContainer.appendChild(toast);
+        document.body.appendChild(toastContainer);
+
+        // Mostrar toast
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 10);
+
+        // Fechar toast ao clicar no botão
+        const closeBtn = toast.querySelector('.toast-close');
+        closeBtn.addEventListener('click', () => {
+            toastContainer.remove();
+        });
+
+        // Fechar automaticamente após 5 segundos
+        toastTimeout = setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                toastContainer.remove();
+            }, 300);
+        }, 5000);
+    }
 
     // Função para popular selects
     function populateSelect(selectElement, options, placeholder = 'Selecione...') {
@@ -104,11 +227,19 @@ document.addEventListener('DOMContentLoaded', function() {
             problemSection.style.display = 'none';
             installationSection.style.display = 'block';
             // Definir valores padrão para instalação
-            populateSelect(problemTypeSelect, equipmentConfig.app.problems);
             equipmentTypeSelect.value = 'app';
+            equipmentTypeSelect.disabled = true;
+            problemTypeSelect.disabled = true;
+            
+            // Se for laboratório, garantir que as posições sejam validadas corretamente
+            const isLab = document.querySelector('input[name="location-type"]:checked').value === 'lab';
+            if (isLab) {
+                positionSelection.style.display = 'block';
+            }
         } else {
             problemSection.style.display = 'block';
             installationSection.style.display = 'none';
+            equipmentTypeSelect.disabled = false;
             updateEquipmentOptions();
         }
     }
@@ -136,7 +267,6 @@ document.addEventListener('DOMContentLoaded', function() {
         positionsGrid.innerHTML = '';
         clearPositionSelection();
         
-        // Criar botões para cada posição
         for (let i = 1; i <= capacity; i++) {
             const positionBtn = document.createElement('button');
             positionBtn.type = 'button';
@@ -151,7 +281,6 @@ document.addEventListener('DOMContentLoaded', function() {
             positionsGrid.appendChild(positionBtn);
         }
         
-        // Ajustar layout da grid baseado na capacidade
         if (capacity <= 21) {
             positionsGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
         } else {
@@ -194,7 +323,6 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             selectedCount.textContent = `${count} ${count === 1 ? 'posição selecionada' : 'posições selecionadas'}`;
             
-            // Mostrar até 5 posições, depois "e mais X"
             if (sortedPositions.length <= 5) {
                 selectedList.textContent = `Posições: ${sortedPositions.join(', ')}`;
             } else {
@@ -239,14 +367,9 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Ativar seleção de tipo de computador
         computerTypeSelect.disabled = false;
-        
-        // Determinar tipo padrão do laboratório
         currentLabType = labs[selectedLab].type;
         computerTypeSelect.value = currentLabType;
-        
-        // Determinar capacidade do laboratório selecionado
         currentLabCapacity = labs[selectedLab].capacity;
         
         positionSelection.style.display = 'block';
@@ -254,142 +377,305 @@ document.addEventListener('DOMContentLoaded', function() {
         updateEquipmentOptions();
     }
 
-    // Gerenciar upload de arquivos (mantido igual)
+    // Gerenciar upload de arquivos
     function handleFileUpload() {
-        // ... (código anterior)
+        fileList.innerHTML = '';
+        const files = fileUpload.files;
+        
+        if (files.length > 3) {
+            showToast('Você pode anexar no máximo 3 arquivos.', 'error');
+            fileUpload.value = '';
+            return;
+        }
+        
+        for (let i = 0; i < files.length; i++) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            
+            const fileIcon = document.createElement('i');
+            fileIcon.className = 'fas fa-file-alt';
+            
+            const fileName = document.createElement('span');
+            fileName.textContent = files[i].name.length > 20 
+                ? files[i].name.substring(0, 20) + '...' 
+                : files[i].name;
+            
+            const removeBtn = document.createElement('span');
+            removeBtn.className = 'remove-file';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.dataset.index = i;
+            removeBtn.addEventListener('click', removeFile);
+            
+            fileItem.appendChild(fileIcon);
+            fileItem.appendChild(fileName);
+            fileItem.appendChild(removeBtn);
+            fileList.appendChild(fileItem);
+        }
     }
 
-    // Remover arquivo da lista (mantido igual)
+    // Remover arquivo da lista
     function removeFile(e) {
-        // ... (código anterior)
+        const index = e.target.dataset.index;
+        const files = Array.from(fileUpload.files);
+        files.splice(index, 1);
+        
+        const dataTransfer = new DataTransfer();
+        files.forEach(file => dataTransfer.items.add(file));
+        fileUpload.files = dataTransfer.files;
+        
+        handleFileUpload();
     }
 
-    // Validar formulário antes de enviar
+    // Função auxiliar para validar URLs
+    function isValidUrl(string) {
+        try {
+            new URL(string);
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    // Validar formulário
     function validateForm() {
+        // Obter valores atuais
         const isInstallation = document.querySelector('input[name="request-type"]:checked').value === 'installation';
         const isLab = document.querySelector('input[name="location-type"]:checked').value === 'lab';
         const location = isLab ? document.getElementById('lab').value : document.getElementById('classroom').value;
-        
+        const computerType = isLab ? document.getElementById('computer-type').value : null;
+
+        // Validações básicas
         if (!location) {
-            alert('Por favor, selecione um local válido.');
+            showToast('Selecione um local válido', 'error');
             return false;
         }
+
+        // Validações específicas para laboratório
+        if (isLab) {
+            if (!computerType) {
+                showToast('Selecione o tipo de computador', 'error');
+                return false;
+            }
+
+            if (computerType === 'desktop' && selectedPositions.size === 0) {
+                showToast('Selecione pelo menos uma posição', 'error');
+                return false;
+            }
+        }
+
+        // Validações por tipo de solicitação
+        if (isInstallation) {
+            if (!document.getElementById('app-name').value.trim()) {
+                showToast('Informe o nome do aplicativo', 'error');
+                return false;
+            }
+        } else {
+            if (!equipmentTypeSelect.value) {
+                showToast('Selecione um equipamento', 'error');
+                return false;
+            }
+
+            if (!problemTypeSelect.value) {
+                showToast('Selecione um tipo de problema', 'error');
+                return false;
+            }
+
+            if (!document.getElementById('problem-description').value.trim()) {
+                showToast('Descreva o problema com detalhes', 'error');
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // Enviar formulário
+    async function submitForm(e) {
+        e.preventDefault();
         
-        if (isLab && selectedPositions.size === 0 && equipmentTypeSelect.value !== 'kit-professor') {
-                    alert('Por favor, selecione pelo menos uma posição ou o Kit Professor.');
-        return false;
-    }
-
-    if (!isInstallation) {
-        if (!equipmentTypeSelect.value) {
-            alert('Por favor, selecione um equipamento.');
-            return false;
-        }
+        if (!validateForm()) return;
         
-        if (!problemTypeSelect.value) {
-            alert('Por favor, selecione um tipo de problema.');
-            return false;
-        }
-    } else {
-        const appName = document.getElementById('app-name').value;
-        if (!appName) {
-            alert('Por favor, informe o nome do aplicativo.');
-            return false;
-        }
-    }
-    
-    return true;
-}
+        const submitBtn = form.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
-// Enviar formulário
-function submitForm(e) {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-        return;
-    }
-    
-    // Obter dados do formulário
-    const formData = new FormData(form);
-    const orderData = {
-        requestType: formData.get('request-type'),
-        locationType: formData.get('location-type'),
-        location: formData.get('location-type') === 'lab' ? 
-                 formData.get('lab') : formData.get('classroom'),
-        computerType: formData.get('computer-type'),
-        equipment: formData.get('equipment-type'),
-        problem: formData.get('problem-type'),
-        description: formData.get('problem-description'),
-        appName: formData.get('app-name'),
-        appVersion: formData.get('app-version'),
-        appLink: formData.get('app-link'),
-        notes: formData.get('installation-notes'),
-        attachments: [],
-        positions: [],
-        requesterId: JSON.parse(localStorage.getItem('currentUser')).id,
-        requesterName: JSON.parse(localStorage.getItem('currentUser')).name,
-        date: new Date().toISOString(),
-        status: 'pending'
-    };
+        try {
+            // Criar objeto com os dados do formulário
+            const formData = {
+                id: `ORD-${Date.now()}`,
+                type: document.querySelector('input[name="request-type"]:checked').value,
+                location: {
+                    type: document.querySelector('input[name="location-type"]:checked').value,
+                    value: document.querySelector('input[name="location-type"]:checked').value === 'lab' 
+                        ? document.getElementById('lab').value 
+                        : document.getElementById('classroom').value,
+                    computerType: document.getElementById('computer-type')?.value,
+                    positions: Array.from(selectedPositions)
+                },
+                details: getFormDetails(),
+                user: JSON.parse(localStorage.getItem('currentUser')),
+                date: new Date().toISOString(),
+                status: 'pending'
+            };
 
-    // Adicionar posições se for laboratório
-    if (orderData.locationType === 'lab' && selectedPositions.size > 0) {
-        orderData.positions = Array.from(selectedPositions).sort((a, b) => a - b);
-    }
-
-    // Adicionar arquivos (simulado)
-    if (fileUpload.files.length > 0) {
-        for (let i = 0; i < fileUpload.files.length; i++) {
-            orderData.attachments.push({
-                name: fileUpload.files[i].name,
-                size: fileUpload.files[i].size,
-                type: fileUpload.files[i].type
-            });
+            // Simular envio assíncrono
+            await new Promise(resolve => setTimeout(resolve, 800));
+            
+            // Salvar no localStorage
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            orders.push(formData);
+            localStorage.setItem('orders', JSON.stringify(orders));
+            
+            showSuccessModal(formData.id);
+        } catch (error) {
+            console.error('Erro:', error);
+            showToast('Erro ao enviar. Tente novamente.', 'error');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Ordem';
         }
     }
-
-    // Gerar ID único para a ordem
-    orderData.id = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-
-    // Salvar no localStorage (simulando envio para o servidor)
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
-    orders.push(orderData);
-    localStorage.setItem('orders', JSON.stringify(orders));
-
-    // Mostrar mensagem de sucesso
-    alert(`Ordem criada com sucesso! Número: ${orderData.id}`);
-    
-    // Redirecionar para a lista de ordens
-    window.location.href = 'minhas-ordens.html';
-}
-
-// Event Listeners
-requestTypeRadios.forEach(radio => {
-    radio.addEventListener('change', toggleRequestType);
-});
-
-locationTypeRadios.forEach(radio => {
-    radio.addEventListener('change', toggleLocationType);
-});
-
-document.getElementById('lab').addEventListener('change', handleLabSelection);
-computerTypeSelect.addEventListener('change', function() {
-    currentLabType = this.value;
-    updateEquipmentOptions();
-});
-selectAllBtn.addEventListener('click', selectAllPositions);
-deselectAllBtn.addEventListener('click', deselectAllPositions);
-equipmentTypeSelect.addEventListener('change', updateProblemOptions);
-fileUpload.addEventListener('change', handleFileUpload);
-form.addEventListener('submit', submitForm);
-
-cancelBtn.addEventListener('click', function() {
-    if (confirm('Deseja cancelar a criação desta ordem?')) {
-        window.location.href = 'painel-professor.html';
+    function showSuccessModal(orderId) {
+        const modalHTML = `
+            <div class="success-modal">
+                <div class="modal-content">
+                    <h3><i class="fas fa-check-circle"></i> Ordem Criada!</h3>
+                    <p>Número: ${orderId}</p>
+                    <div class="modal-actions">
+                        <button id="view-orders" class="btn-primary">
+                            <i class="fas fa-list"></i> Ver Ordens
+                        </button>
+                        <button id="new-order" class="btn-secondary">
+                            <i class="fas fa-plus"></i> Nova Ordem
+                        </button>
+                        <button id="return-dashboard" class="btn-tertiary">
+                            <i class="fas fa-home"></i> Painel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const modal = document.createElement('div');
+        modal.innerHTML = modalHTML;
+        document.body.appendChild(modal);
+        
+        // Configurar eventos dos botões
+        modal.querySelector('#view-orders').addEventListener('click', () => {
+            window.location.href = 'minhas-ordens.html';
+        });
+        
+        modal.querySelector('#new-order').addEventListener('click', () => {
+            resetForm();
+            modal.remove();
+        });
+        
+        modal.querySelector('#return-dashboard').addEventListener('click', () => {
+            window.location.href = 'painel-professor.html';
+        });
     }
-});
+    function resetForm() {
+        // Resetar valores
+        form.reset();
+        
+        // Resetar selects
+        equipmentTypeSelect.selectedIndex = 0;
+        problemTypeSelect.selectedIndex = 0;
+        
+        // Resetar textareas
+        document.getElementById('problem-description').value = '';
+        document.getElementById('installation-notes').value = '';
+        
+        // Resetar posições
+        selectedPositions.clear();
+        updateSelectedDisplay();
+        
+        // Resetar arquivos
+        fileUpload.value = '';
+        fileList.innerHTML = '';
+        
+        // Resetar UI
+        document.querySelector('input[name="request-type"][value="problem"]').checked = true;
+        document.querySelector('input[name="location-type"][value="classroom"]').checked = true;
+        toggleRequestType();
+        toggleLocationType();
+    }
 
-// Inicialização
-toggleRequestType();
-toggleLocationType();
-    })
+    function getFormDetails() {
+        const isInstallation = document.querySelector('input[name="request-type"]:checked').value === 'installation';
+        
+        if (isInstallation) {
+            return {
+                appName: document.getElementById('app-name').value,
+                appVersion: document.getElementById('app-version').value,
+                appLink: document.getElementById('app-link').value,
+                notes: document.getElementById('installation-notes').value
+            };
+        } else {
+            return {
+                equipment: document.getElementById('equipment-type').value,
+                problemType: document.getElementById('problem-type').value,
+                description: document.getElementById('problem-description').value
+            };
+        }
+    }
+
+    // Event Listeners
+    requestTypeRadios.forEach(radio => {
+        radio.addEventListener('change', toggleRequestType);
+    });
+
+    locationTypeRadios.forEach(radio => {
+        radio.addEventListener('change', toggleLocationType);
+    });
+
+    document.getElementById('lab').addEventListener('change', handleLabSelection);
+    computerTypeSelect.addEventListener('change', function() {
+        currentLabType = this.value;
+        updateEquipmentOptions();
+    });
+    selectAllBtn.addEventListener('click', selectAllPositions);
+    deselectAllBtn.addEventListener('click', deselectAllPositions);
+    equipmentTypeSelect.addEventListener('change', updateProblemOptions);
+    fileUpload.addEventListener('change', handleFileUpload);
+    form.addEventListener('submit', function(e) {
+        submitForm(e);
+    });
+
+
+
+    cancelBtn.addEventListener('click', function() {
+        const confirmationModal = `
+            <div class="confirmation-modal" style="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;z-index:1000;">
+                <div style="background:white;padding:25px;border-radius:8px;width:90%;max-width:400px;text-align:center;">
+                    <h3 style="margin-top:0;color:#2c3e50;"><i class="fas fa-exclamation-triangle"></i> Confirmar Cancelamento</h3>
+                    <p style="margin-bottom:20px;">Deseja realmente cancelar a criação desta ordem?</p>
+                    <div style="display:flex;justify-content:center;gap:10px;">
+                        <button id="confirm-cancel" style="padding:10px 15px;background:#e74c3c;color:white;border:none;border-radius:4px;cursor:pointer;">
+                            <i class="fas fa-times"></i> Sim, Cancelar
+                        </button>
+                        <button id="dont-cancel" style="padding:10px 15px;background:#3498db;color:white;border:none;border-radius:4px;cursor:pointer;">
+                            <i class="fas fa-arrow-left"></i> Voltar
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const modalElement = document.createElement('div');
+        modalElement.innerHTML = confirmationModal;
+        document.body.appendChild(modalElement);
+        
+        document.getElementById('confirm-cancel').addEventListener('click', () => {
+            window.location.href = 'painel-professor.html';
+        });
+        
+        document.getElementById('dont-cancel').addEventListener('click', () => {
+            modalElement.remove();
+        });
+    });
+
+    // Inicialização
+    toggleRequestType();
+    toggleLocationType();
+});

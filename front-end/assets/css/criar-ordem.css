@@ -88,6 +88,58 @@
     border-color: var(--secondary);
 }
 
+.btn-secondary {
+    background-color: #f8f9fa;
+    color: #dc3545;
+    border: 1px solid #dc3545;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #dc3545;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.btn-secondary i {
+    margin-right: 8px;
+}
+
+.success-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.success-modal .modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+}
+
+.success-modal h3 {
+    color: #2ecc71;
+    margin-top: 0;
+}
+
+.success-modal .modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
 /* Seções do Formulário */
 .form-section {
     margin-bottom: 2.5rem;
@@ -115,6 +167,145 @@
     color: var(--secondary);
     width: 24px;
     text-align: center;
+}
+
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.toast {
+    padding: 15px 25px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateX(150%);
+    transition: transform 0.3s ease-in-out;
+    max-width: 350px;
+}
+
+.toast.show {
+    transform: translateX(0);
+}
+
+.toast.success {
+    background-color: #28a745;
+}
+
+.toast.error {
+    background-color: #dc3545;
+}
+
+.toast.warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.toast i {
+    margin-right: 10px;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    margin-left: 15px;
+    font-size: 1.2rem;
+}
+
+.redirect-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.redirect-modal-content {
+    background-color: white;
+    padding: 25px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    text-align: center;
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.redirect-modal h3 {
+    margin-top: 0;
+    color: #2c3e50;
+    font-size: 1.3rem;
+}
+
+.redirect-modal p {
+    margin-bottom: 20px;
+    color: #555;
+}
+
+.redirect-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.redirect-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.redirect-btn i {
+    font-size: 1.1rem;
+}
+
+.redirect-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.redirect-btn-primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.redirect-btn-secondary {
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+.btn-tertiary {
+    background: #e74c3c;
+    color: white;
+}
+
+.redirect-btn-tertiary {
+    background-color: #e74c3c;
+    color: white;
 }
 
 /* Grupos de Formulário */
@@ -394,12 +585,12 @@ select {
 }
 
 .btn-secondary {
-    background: #f0f2f5;
-    color: var(--text-medium);
+    background:rgb(247, 78, 66);
+    color: white;
 }
 
 .btn-secondary:hover {
-    background: #e6e9f0;
+    background:rgb(248, 144, 125);
     color: var(--text-dark);
 }
 

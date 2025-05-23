@@ -27,12 +27,12 @@
             
             <div class="user-profile">
                 <div class="profile-info">
-                    <span class="user-name">Prof. Carlos</span>
-                    <span class="user-email">carlos.sousa25@fatec.sp.gov.br</span>
+                    <span class="user-name" id="user-name">Carregando...</span>
+                    <span class="user-email" id="user-email"></span>
                 </div>
                 <div class="profile-dropdown">
-                    <img src="../../assets/images/default-avatar.png" alt="Foto do Professor" class="profile-avatar" id="profile-toggle">
-                    <div class="dropdown-content" id="profile-dropdown">
+                    <img src="../../assets/images/default-avatar.png" alt="Foto do Professor" class="profile-avatar" id="profile-avatar">
+                    <div class="dropdown-content">
                         <a href="perfil-professor.html"><i class="fas fa-user"></i> Meu Perfil</a>
                         <a href="../../index.html" id="logout"><i class="fas fa-sign-out-alt"></i> Sair</a>
                     </div>
@@ -285,5 +285,24 @@
     <script src="../../assets/js/data.js"></script>
     <script src="../../assets/js/professor.js"></script>
     <script src="../../assets/js/criar-ordem.js"></script>
+    <!-- Modal de Redirecionamento -->
+    <div id="redirect-modal" class="redirect-modal">
+        <div class="redirect-modal-content">
+            <h3><i class="fas fa-check-circle"></i> Ordem Enviada!</h3>
+            <p>Sua ordem foi criada com sucesso. O que deseja fazer agora?</p>
+            
+            <div class="redirect-options">
+                <button id="go-to-orders" class="redirect-btn redirect-btn-primary">
+                    <i class="fas fa-list-ul"></i> Ver Minhas Ordens
+                </button>
+                <button id="stay-here" class="redirect-btn redirect-btn-secondary">
+                    <i class="fas fa-plus-circle"></i> Criar Nova Ordem
+                </button>
+                <button id="go-to-dashboard" class="redirect-btn redirect-btn-tertiary">
+                    <i class="fas fa-home"></i> Voltar ao Painel
+                </button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
