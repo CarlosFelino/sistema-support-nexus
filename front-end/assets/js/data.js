@@ -27,15 +27,15 @@ const users = [
 // Dados de laboratórios
 const labs = {
   "202": { capacity: 30, type: "desktop" },
-  "203": { capacity: 30, type: "desktop" },
+  "203": { capacity: 30, type: "notebook" },
   "204": { capacity: 30, type: "desktop" },
-  "205": { capacity: 30, type: "desktop" },
+  "205": { capacity: 30, type: "notebook" },
   "206": { capacity: 30, type: "desktop" },
-  "207": { capacity: 30, type: "desktop" },
+  "207": { capacity: 30, type: "notebook" },
   "208": { capacity: 15, type: "desktop" },
-  "209": { capacity: 21, type: "notebook" },
+  "209": { capacity: 21, type: "desktop" },
   "210": { capacity: 30, type: "notebook" },
-  "211": { capacity: 30, type: "notebook" },
+  "211": { capacity: 30, type: "desktop" },
   "213": { capacity: 30, type: "notebook" },
   "214": { capacity: 30, type: "notebook" },
   "215": { capacity: 30, type: "notebook" }

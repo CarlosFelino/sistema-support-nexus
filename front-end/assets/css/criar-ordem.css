@@ -585,12 +585,12 @@ select {
 }
 
 .btn-secondary {
-    background:rgb(247, 78, 66);
-    color: white;
+    background:rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
 }
 
 .btn-secondary:hover {
-    background:rgb(248, 144, 125);
+    background:rgb(226, 45, 60);
     color: var(--text-dark);
 }
 
