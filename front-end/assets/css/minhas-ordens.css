@@ -179,10 +179,10 @@
 
 /* Lista de Ordens */
 .orders-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-    margin-bottom: 2rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    margin-top: 2rem;
 }
 
 .order-card {
@@ -231,6 +231,7 @@
 
 .order-date {
     color: var(--text-medium);
+    font-size: 0.9rem;
 }
 
 .order-status {
@@ -354,23 +355,27 @@
 }
 
 /* Paginação */
+/* Paginação */
 .pagination {
     display: flex;
     justify-content: center;
     gap: 0.5rem;
     margin-top: 2rem;
+    flex-wrap: wrap;
 }
 
 .pagination-btn {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
+    padding: 0.5rem 0.8rem;
     border: 1px solid var(--border-light);
-    background: #fff;
+    background: white;
+    border-radius: 4px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    transition: all 0.2s;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    border-color: var(--secondary);
+    color: var(--secondary);
 }
 
 .pagination-btn.active {
@@ -382,10 +387,6 @@
 .pagination-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-}
-
-.pagination-btn:not(.active):not(:disabled):hover {
-    background: #f0f2f5;
 }
 
 /* Modal */
@@ -446,6 +447,52 @@
     border-top: 1px solid var(--border-light);
     text-align: right;
 }
+.detail-row {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.detail-row.full-width {
+    flex-direction: column;
+}
+
+.detail-label {
+    font-weight: 500;
+    color: var(--primary-dark);
+    min-width: 150px;
+    margin-right: 1rem;
+}
+
+.detail-value {
+    color: var(--text-dark);
+    flex: 1;
+}
+
+.status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.status-badge.pending {
+    background: rgba(255, 152, 0, 0.1);
+    color: #FF9800;
+}
+
+.status-badge.in-progress {
+    background: rgba(33, 150, 243, 0.1);
+    color: #2196F3;
+}
+
+.status-badge.completed {
+    background: rgba(76, 175, 80, 0.1);
+    color: #4CAF50;
+}
+
 
 /* Responsividade */
 @media (max-width: 768px) {
@@ -465,13 +512,22 @@
         width: 100%;
         justify-content: space-between;
     }
+    .detail-row {
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+    .detail-label {
+        min-width: 100%;
+        margin-bottom: 0.3rem;
+    }
     
     .order-header {
         flex-direction: column;
+        align-items: flex-start;
         gap: 0.5rem;
     }
     
     .order-actions {
-        justify-content: center;
+        justify-content: flex-start;
     }
 }

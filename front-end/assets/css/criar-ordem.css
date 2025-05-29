@@ -235,78 +235,42 @@
 
 .redirect-modal-content {
     background-color: white;
-    padding: 25px;
+    padding: 2rem;
     border-radius: 8px;
     width: 90%;
-    max-width: 400px;
+    max-width: 450px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     text-align: center;
-    animation: modalFadeIn 0.3s ease-out;
+}
+
+.modal-header {
+    margin-bottom: 1.5rem;
+}
+
+.success-icon {
+    font-size: 2.5rem;
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
 }
 
 @keyframes modalFadeIn {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(-30px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .redirect-modal h3 {
-    margin-top: 0;
-    color: #2c3e50;
-    font-size: 1.3rem;
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 .redirect-modal p {
-    margin-bottom: 20px;
-    color: #555;
+    margin-bottom: 2rem;
+    color: var(--text-light);
+    font-size: 1rem;
 }
 
-.redirect-options {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.redirect-btn {
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    transition: all 0.2s;
-}
-
-.redirect-btn i {
-    font-size: 1.1rem;
-}
-
-.redirect-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.redirect-btn-primary {
-    background-color: #3498db;
-    color: white;
-}
-
-.redirect-btn-secondary {
-    background-color: #f1f1f1;
-    color: #333;
-}
-
-.btn-tertiary {
-    background: #e74c3c;
-    color: white;
-}
-
-.redirect-btn-tertiary {
-    background-color: #e74c3c;
-    color: white;
-}
 
 /* Grupos de Formulário */
 .form-group {
@@ -550,11 +514,12 @@ select {
 /* Botões */
 .form-actions {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     gap: 1rem;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     padding-top: 1.5rem;
     border-top: 1px solid var(--border-light);
+    flex-wrap: wrap;
 }
 
 .btn {
@@ -567,6 +532,7 @@ select {
     cursor: pointer;
     transition: all 0.3s;
     border: none;
+    min-width: 120px;
 }
 
 .btn i {
@@ -585,13 +551,24 @@ select {
 }
 
 .btn-secondary {
-    background:rgb(255, 255, 255);
-    color: rgb(0, 0, 0);
+    background: white;
+    color: black;
+    border: 1px solid var(--border-light);
 }
 
 .btn-secondary:hover {
-    background:rgb(226, 45, 60);
+    background: #f0f0f0;
     color: var(--text-dark);
+}
+
+.btn-tertiary {
+    background: #f8f9fa;
+    color: var(--text-dark);
+    border: 1px solid var(--border-light);
+}
+.btn-tertiary:hover {
+    background: #e9ecef;
+    border-color: #d0d0d0;
 }
 
 /* Campos Dinâmicos */

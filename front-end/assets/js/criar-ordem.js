@@ -500,33 +500,21 @@ document.addEventListener('DOMContentLoaded', function() {
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Enviando...';
 
         try {
-            // Criar objeto com os dados do formulário
-            const formData = {
-                id: `ORD-${Date.now()}`,
-                type: document.querySelector('input[name="request-type"]:checked').value,
-                location: {
-                    type: document.querySelector('input[name="location-type"]:checked').value,
-                    value: document.querySelector('input[name="location-type"]:checked').value === 'lab' 
-                        ? document.getElementById('lab').value 
-                        : document.getElementById('classroom').value,
-                    computerType: document.getElementById('computer-type')?.value,
-                    positions: Array.from(selectedPositions)
-                },
-                details: getFormDetails(),
-                user: JSON.parse(localStorage.getItem('currentUser')),
-                date: new Date().toISOString(),
-                status: 'pending'
-            };
-
+            // Criar objeto padronizado com os dados do formulário
+            const orderData = standardizeOrderData();
+            
             // Simular envio assíncrono
             await new Promise(resolve => setTimeout(resolve, 800));
             
             // Salvar no localStorage
             const orders = JSON.parse(localStorage.getItem('orders')) || [];
-            orders.push(formData);
+            orders.push(orderData);
             localStorage.setItem('orders', JSON.stringify(orders));
             
-            showSuccessModal(formData.id);
+            // Atualizar o timestamp para forçar recarregamento no painel
+            localStorage.setItem('lastOrderUpdate', Date.now().toString());
+            
+            showSuccessModal(orderData.id);
         } catch (error) {
             console.error('Erro:', error);
             showToast('Erro ao enviar. Tente novamente.', 'error');
@@ -535,6 +523,58 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Enviar Ordem';
         }
     }
+    function standardizeOrderData(formData) {
+        const isInstallation = document.querySelector('input[name="request-type"]:checked').value === 'installation';
+        const isLab = document.querySelector('input[name="location-type"]:checked').value === 'lab';
+        
+        // Dados básicos
+        const order = {
+            id: `ORD-${Date.now()}`,
+            type: isInstallation ? 'installation' : 'problem',
+            status: 'pending',
+            date: new Date().toISOString(),
+            requester: JSON.parse(localStorage.getItem('currentUser')),
+            location: {
+                type: isLab ? 'lab' : 'classroom',
+                value: isLab ? document.getElementById('lab').value : document.getElementById('classroom').value
+            }
+        };
+        
+        // Adicionar dados específicos do laboratório
+        if (isLab) {
+            order.location.computerType = document.getElementById('computer-type').value;
+            order.location.positions = Array.from(selectedPositions).sort((a, b) => a - b);
+        }
+        
+        // Adicionar detalhes específicos do tipo de solicitação
+        if (isInstallation) {
+            order.details = {
+                appName: document.getElementById('app-name').value.trim(),
+                appVersion: document.getElementById('app-version').value.trim(),
+                appLink: document.getElementById('app-link').value.trim(),
+                notes: document.getElementById('installation-notes').value.trim()
+            };
+        } else {
+            order.details = {
+                equipment: document.getElementById('equipment-type').value,
+                problemType: document.getElementById('problem-type').value,
+                description: document.getElementById('problem-description').value.trim()
+            };
+        }
+        
+        // Adicionar anexos se existirem
+        if (fileUpload.files.length > 0) {
+            order.attachments = Array.from(fileUpload.files).map(file => ({
+                name: file.name,
+                size: file.size,
+                type: file.type
+            }));
+        }
+        
+        return order;
+    }
+
+
     function showSuccessModal(orderId) {
         const modalHTML = `
             <div class="success-modal">

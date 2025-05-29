@@ -146,6 +146,67 @@ const equipmentConfig = {
   }
 };
 
+// Dados de ordens de serviço
+const orders = [
+  {
+    "id": "ORD-2025-001",
+    "title": "Sala 101 - Kit Professor",
+    "description": "Monitor não liga e teclado sem resposta. Problema ocorre desde o início da aula.",
+    "status": "pending",
+    "date": "2025-10-15T09:30:00",
+    "requesterId": "12345",
+    "requesterName": "Carlos Alexandre",
+    "location": "Sala 101 - Bloco 3",
+    "equipment": "kit-professor",
+    "type": "Hardware",
+    "priority": "medium",
+    "assignedTo": null,
+    "attachments": [],
+    "positions": [],
+    "solution": "",
+    "evaluation": null
+  },
+  {
+    "id": "ORD-2025-002",
+    "title": "Lab 203 - Posição 12",
+    "description": "Computador não inicia o sistema. Apresenta tela azul ao ligar.",
+    "status": "in-progress",
+    "date": "2025-10-16T14:15:00",
+    "requesterId": "12345",
+    "requesterName": "Carlos Alexandre",
+    "location": "Laboratório 203 - Bloco 3",
+    "equipment": "computador-aluno",
+    "type": "Sistema Operacional",
+    "priority": "high",
+    "assignedTo": "54321",
+    "assignedName": "João Silva",
+    "attachments": [],
+    "positions": [12],
+    "technicianNotes": "Verificar sistema operacional",
+    "evaluation": null
+  },
+  {
+    "id": "ORD-2025-003",
+    "title": "Sala 305 - Cabo HDMI",
+    "description": "Cabo HDMI com defeito - imagem falhando durante a aula.",
+    "status": "completed",
+    "date": "2025-10-17T13:45:00",
+    "requesterId": "12345",
+    "requesterName": "Carlos Alexandre",
+    "location": "Sala 305 - Bloco 4",
+    "equipment": "cabo-hdmi",
+    "type": "Periférico",
+    "priority": "low",
+    "assignedTo": "67890",
+    "assignedName": "Maria Oliveira",
+    "attachments": [],
+    "positions": [],
+    "solution": "Cabo HDMI substituído",
+    "completedDate": "2025-10-17T16:30:00",
+    "evaluation": 4
+  }
+];
+
 
 // Inicializar localStorage
 function initializeLocalStorage() {

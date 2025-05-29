@@ -46,7 +46,7 @@
         <nav class="sidebar-nav">
             <ul>
                 <li>
-                    <a href="painel-professor.html" class="active">
+                    <a href="painel-professor.html">
                         <i class="fas fa-home"></i>
                         <span>Início</span>
                     </a>
@@ -58,7 +58,7 @@
                     </a>
                 </li>
                 <li>
-                    <a href="minhas-ordens.html">
+                    <a href="minhas-ordens.html" class="active">
                         <i class="fas fa-list-ul"></i>
                         <span>Minhas Ordens</span>
                     </a>
@@ -143,104 +143,13 @@
 
         <!-- Lista de Ordens -->
         <div class="orders-list" id="orders-list">
-            <!-- Ordem 1 - Pendente -->
-            <div class="order-card pending" data-id="ORD-2025-001" data-date="2025-10-15" data-room="101" data-equipment="kit-professor">
-                <div class="order-header">
-                    <span class="order-id">#ORD-2025-001</span>
-                    <span class="order-date">15/10/2025</span>
-                    <span class="order-status pending"><i class="fas fa-clock"></i> Pendente</span>
-                </div>
-                <div class="order-content">
-                    <h3>Sala 101 - Kit Professor</h3>
-                    <p class="order-description">Monitor não liga e teclado sem resposta. Problema ocorre desde o início da aula.</p>
-                    <div class="order-meta">
-                        <span><i class="fas fa-tag"></i> Hardware</span>
-                        <span><i class="fas fa-user-cog"></i> Técnico: Não atribuído</span>
-                    </div>
-                </div>
-                <div class="order-actions">
-                    <button class="btn btn-small btn-view">
-                        <i class="fas fa-eye"></i> Detalhes
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Ordem 2 - Em Andamento -->
-            <div class="order-card in-progress" data-id="ORD-2025-002" data-date="2025-10-16" data-room="203" data-equipment="computador-aluno">
-                <div class="order-header">
-                    <span class="order-id">#ORD-2025-002</span>
-                    <span class="order-date">16/10/2025</span>
-                    <span class="order-status in-progress"><i class="fas fa-spinner"></i> Em Andamento</span>
-                </div>
-                <div class="order-content">
-                    <h3>Lab 203 - Posição 12</h3>
-                    <p class="order-description">Computador não inicia o sistema. Apresenta tela azul ao ligar.</p>
-                    <div class="order-meta">
-                        <span><i class="fas fa-tag"></i> Sistema Operacional</span>
-                        <span><i class="fas fa-user-cog"></i> Técnico: João Silva</span>
-                    </div>
-                </div>
-                <div class="order-actions">
-                    <button class="btn btn-small btn-view">
-                        <i class="fas fa-eye"></i> Detalhes
-                    </button>
-                    <button class="btn btn-small btn-msg">
-                        <i class="fas fa-comment"></i> Mensagem
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Ordem 3 - Concluída -->
-            <div class="order-card completed" data-id="ORD-2025-003" data-date="2025-10-17" data-room="305" data-equipment="cabo-hdmi">
-                <div class="order-header">
-                    <span class="order-id">#ORD-2025-003</span>
-                    <span class="order-date">17/10/2025</span>
-                    <span class="order-status completed"><i class="fas fa-check-circle"></i> Concluída</span>
-                </div>
-                <div class="order-content">
-                    <h3>Sala 305 - Cabo HDMI</h3>
-                    <p class="order-description">Cabo HDMI com defeito - imagem falhando durante a aula.</p>
-                    <div class="order-meta">
-                        <span><i class="fas fa-tag"></i> Periférico</span>
-                        <span><i class="fas fa-user-cog"></i> Técnico: Maria Oliveira</span>
-                        <span><i class="fas fa-star"></i> Avaliação: 4/5</span>
-                    </div>
-                </div>
-                <div class="order-actions">
-                    <button class="btn btn-small btn-view">
-                        <i class="fas fa-eye"></i> Detalhes
-                    </button>
-                    <button class="btn btn-small btn-feedback">
-                        <i class="fas fa-star"></i> Avaliar
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Ordem 4 - Não Concluída -->
-            <div class="order-card not-completed" data-id="ORD-2025-004" data-date="2025-10-18" data-room="208" data-equipment="notebook">
-                <div class="order-header">
-                    <span class="order-id">#ORD-2025-004</span>
-                    <span class="order-date">18/10/2025</span>
-                    <span class="order-status not-completed"><i class="fas fa-times-circle"></i> Não Concluída</span>
-                </div>
-                <div class="order-content">
-                    <h3>Lab 208 - Notebook Posição 5</h3>
-                    <p class="order-description">Notebook não conecta à rede Wi-Fi. Necessário verificar placa de rede.</p>
-                    <div class="order-meta">
-                        <span><i class="fas fa-tag"></i> Rede</span>
-                        <span><i class="fas fa-user-cog"></i> Técnico: Carlos Mendes</span>
-                    </div>
-                </div>
-                <div class="order-actions">
-                    <button class="btn btn-small btn-view">
-                        <i class="fas fa-eye"></i> Detalhes
-                    </button>
-                    <button class="btn btn-small btn-reopen">
-                        <i class="fas fa-redo"></i> Reabrir
-                    </button>
-                </div>
+            <!-- As ordens serão carregadas dinamicamente via JavaScript -->
+            <div class="loading-orders">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>Carregando suas ordens...</span>
             </div>
         </div>
+
         
         <!-- Paginação -->
         <div class="pagination">
@@ -272,7 +181,7 @@
         </div>
     </div>
 
-
+    <script src="../../assets/js/data.js"></script>
     <script src="../../assets/js/minhas-ordens.js"></script>
     <script src="../../assets/js/professor.js"></script>
 </body>

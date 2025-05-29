@@ -56,21 +56,47 @@ class ProfessorDashboard {
 
   async loadDashboardData() {
     try {
-      // Atualizar informações do usuário
-      await this.updateUserProfile();
-      
-      // Carregar estatísticas das ordens
-      const stats = await mockApi.getOrderStats(this.currentUser.id);
-      
-      // Atualizar UI com os dados
-      this.updateWelcomeMessage(stats);
-      this.updateQuickActions(stats);
-      this.displayRecentOrders(stats.recent);
+        // Atualizar informações do usuário
+        await this.updateUserProfile();
+        
+        // Carregar todas as ordens do professor
+        const allOrders = await mockApi.getProfessorOrders(this.currentUser.id);
+        
+        // Ordenar por data (mais recente primeiro)
+        const sortedOrders = allOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        // Pegar as 3 mais recentes
+        const recentOrders = sortedOrders.slice(0, 3);
+        
+        // Atualizar UI com os dados
+        this.updateWelcomeMessage({
+            pending: allOrders.filter(o => o.status === 'pending').length,
+            inProgress: allOrders.filter(o => o.status === 'in-progress').length,
+            recent: recentOrders
+        });
+        
+        this.updateQuickActions({
+            pending: allOrders.filter(o => o.status === 'pending').length,
+            inProgress: allOrders.filter(o => o.status === 'in-progress').length
+        });
+        
+        this.displayRecentOrders(recentOrders);
     } catch (error) {
-      console.error('Erro ao carregar dados:', error);
-      this.showError('Erro ao carregar dados do dashboard');
+        console.error('Erro ao carregar dados:', error);
+        this.showError('Erro ao carregar dados do dashboard');
     }
   }
+
+  setupOrderUpdatesListener() {
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'lastOrderUpdate') {
+            this.loadDashboardData();
+        }
+    });
+  }
+
+  // No método init(), adicione:
+  this.setupOrderUpdatesListener();
 
   async updateUserProfile() {
     try {

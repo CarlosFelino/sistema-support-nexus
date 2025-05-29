@@ -8,17 +8,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const togglePasswordBtns = document.querySelectorAll('.toggle-password');
     const userType = document.body.classList.contains('professor-dashboard') ? 'professor' : 'suporte';
 
-    // Carregar dados do usuário do localStorage
+    // Carregar dados do usuário
     function loadUserData() {
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-        const users = JSON.parse(localStorage.getItem('users')) || [];
-        
         if (!currentUser) {
             window.location.href = '../../login.html';
             return;
         }
 
-        // Encontrar usuário completo na lista de usuários
+        const users = JSON.parse(localStorage.getItem('users')) || [];
         const userData = users.find(u => u.employeeId === currentUser.id) || {
             employeeId: currentUser.id,
             fullName: currentUser.name,
@@ -35,23 +33,25 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('birthdate').value = userData.birthDate || '';
         document.getElementById('phone').value = userData.phone || '';
         
-        // Atualizar navbar
+        // Carregar foto se existir
+        const photoUrl = localStorage.getItem(`userPhoto_${userData.employeeId}`) || 
+                        '../../assets/images/default-avatar.png';
+        profilePreview.src = photoUrl;
+        
         updateNavbarProfile(userData);
     }
 
-    // Atualizar navbar com dados do usuário
+    // Atualizar navbar
     function updateNavbarProfile(userData) {
         const navProfileImg = document.querySelector('.profile-dropdown .profile-avatar');
         const userNameElement = document.querySelector('.user-name');
         const userEmailElement = document.querySelector('.user-email');
         
-        // Carregar foto do localStorage ou usar padrão
         const photoUrl = localStorage.getItem(`userPhoto_${userData.employeeId}`) || 
                         '../../assets/images/default-avatar.png';
         
         if (navProfileImg) navProfileImg.src = photoUrl;
         
-        // Atualizar nome e email
         if (userNameElement) {
             userNameElement.textContent = 
                 userType === 'professor' ? `Prof. ${userData.fullName.split(' ')[0]}` 
@@ -66,42 +66,55 @@ document.addEventListener('DOMContentLoaded', function() {
     // Foto de Perfil
     photoInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
-        if (file) {
-            if (file.size > 2 * 1024 * 1024) {
-                alert('A imagem deve ter no máximo 2MB');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                profilePreview.src = event.target.result;
-                // Salvar no localStorage
-                const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-                if (currentUser) {
-                    localStorage.setItem(`userPhoto_${currentUser.id}`, event.target.result);
-                    
-                    // Atualizar navbar
-                    const navProfileImg = document.querySelector('.profile-dropdown .profile-avatar');
-                    if (navProfileImg) navProfileImg.src = event.target.result;
-                }
-            };
-            reader.readAsDataURL(file);
+        if (!file) return;
+
+        // Validações
+        const validTypes = ['image/jpeg', 'image/png'];
+        if (!validTypes.includes(file.type)) {
+            showFeedback('Apenas imagens JPEG ou PNG são permitidas', 'error');
+            return;
         }
+
+        if (file.size > 2 * 1024 * 1024) {
+            showFeedback('A imagem deve ter no máximo 2MB', 'error');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            profilePreview.src = event.target.result;
+            
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            if (currentUser) {
+                localStorage.setItem(`userPhoto_${currentUser.id}`, event.target.result);
+                
+                // Atualizar navbar
+                const navProfileImg = document.querySelector('.profile-dropdown .profile-avatar');
+                if (navProfileImg) navProfileImg.src = event.target.result;
+                
+                showFeedback('Foto de perfil atualizada com sucesso!', 'success');
+            }
+        };
+        reader.readAsDataURL(file);
     });
     
     removePhotoBtn.addEventListener('click', function() {
+        if (!confirm('Tem certeza que deseja remover sua foto de perfil?')) {
+            return;
+        }
+        
         const defaultPhoto = '../../assets/images/default-avatar.png';
         profilePreview.src = defaultPhoto;
         photoInput.value = '';
         
-        // Remover do localStorage
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         if (currentUser) {
             localStorage.removeItem(`userPhoto_${currentUser.id}`);
             
-            // Atualizar navbar
             const navProfileImg = document.querySelector('.profile-dropdown .profile-avatar');
             if (navProfileImg) navProfileImg.src = defaultPhoto;
+            
+            showFeedback('Foto de perfil removida', 'success');
         }
     });
     
@@ -111,15 +124,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const input = this.parentElement.querySelector('input');
             const icon = this.querySelector('i');
             
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                input.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
-            }
+            input.type = input.type === 'password' ? 'text' : 'password';
+            icon.classList.toggle('fa-eye-slash');
+            icon.classList.toggle('fa-eye');
         });
     });
     
@@ -127,52 +134,51 @@ document.addEventListener('DOMContentLoaded', function() {
     personalDataForm.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Validação do telefone
-        const phone = document.getElementById('phone');
-        if (!phone.validity.valid) {
-            alert('Por favor, insira um número de telefone válido no formato (XX) XXXXX-XXXX');
+        // Validações
+        const email = document.getElementById('email').value;
+        if (!email.endsWith('@fatec.sp.gov.br')) {
+            showFeedback('Use seu email institucional (@fatec.sp.gov.br)', 'error');
+            return;
+        }
+
+        const phone = document.getElementById('phone').value;
+        if (!phone.match(/^\(\d{2}\) \d{5}-\d{4}$/)) {
+            showFeedback('Formato de telefone inválido. Use (XX) XXXXX-XXXX', 'error');
             return;
         }
         
-        // Obter dados atuais
+        // Atualizar dados
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         const users = JSON.parse(localStorage.getItem('users')) || [];
         const userIndex = users.findIndex(u => u.employeeId === currentUser.id);
         
         if (userIndex === -1) {
-            alert('Usuário não encontrado');
+            showFeedback('Usuário não encontrado', 'error');
             return;
         }
         
-        // Criar objeto com dados atualizados
         const updatedData = {
-            ...users[userIndex], // Mantém os dados existentes
-            employeeId: document.getElementById('registration').value,
-            fullName: document.getElementById('fullname').value,
-            email: document.getElementById('email').value,
+            ...users[userIndex],
+            fullName: document.getElementById('fullname').value.trim(),
+            email: email,
             birthDate: document.getElementById('birthdate').value,
-            phone: document.getElementById('phone').value
+            phone: phone
         };
         
-        // Atualizar lista de usuários
+        // Salvar alterações
         const updatedUsers = [...users];
         updatedUsers[userIndex] = updatedData;
-        
-        // Salvar no localStorage
         localStorage.setItem('users', JSON.stringify(updatedUsers));
         
         // Atualizar currentUser
         localStorage.setItem('currentUser', JSON.stringify({
-            id: updatedData.employeeId,
+            id: currentUser.id,
             name: updatedData.fullName,
             email: updatedData.email,
             type: userType
         }));
         
-        // Atualizar navbar
         updateNavbarProfile(updatedData);
-        
-        // Feedback
         showFeedback('Dados pessoais atualizados com sucesso!', 'success');
     });
     
@@ -195,7 +201,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // Verificar senha atual
+        // Verificar usuário e senha atual
         const currentUser = JSON.parse(localStorage.getItem('currentUser'));
         const users = JSON.parse(localStorage.getItem('users')) || [];
         const userIndex = users.findIndex(u => u.employeeId === currentUser.id);
@@ -205,29 +211,26 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        if (users[userIndex].password !== currentPassword) {
+        if (users[userIndex].password !== simpleHash(currentPassword)) {
             showFeedback('Senha atual incorreta', 'error');
             return;
         }
 
-        // Atualizar senha
-        users[userIndex].password = newPassword;
+        // Atualizar senha com hash
+        users[userIndex].password = simpleHash(newPassword);
         localStorage.setItem('users', JSON.stringify(users));
         
         // Feedback visual
         const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        
         submitBtn.innerHTML = '<i class="fas fa-check"></i> Senha alterada!';
         submitBtn.disabled = true;
         
-        // Resetar formulário e botão após 3 segundos
+        // Resetar após 3 segundos
         setTimeout(() => {
             passwordForm.reset();
-            submitBtn.innerHTML = originalText;
+            submitBtn.innerHTML = '<i class="fas fa-key"></i> Alterar Senha';
             submitBtn.disabled = false;
             
-            // Esconder senhas novamente
             document.querySelectorAll('.password-field input').forEach(input => {
                 input.type = 'password';
             });
@@ -249,19 +252,40 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Mostrar feedback ao usuário
     function showFeedback(message, type) {
+        // Remover feedbacks anteriores
+        const existingFeedback = document.querySelector('.profile-feedback');
+        if (existingFeedback) existingFeedback.remove();
+        
         const feedbackElement = document.createElement('div');
         feedbackElement.className = `profile-feedback ${type}`;
         feedbackElement.innerHTML = `
             <i class="fas ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
             <span>${message}</span>
+            <button class="close-feedback"><i class="fas fa-times"></i></button>
         `;
+        
+        feedbackElement.querySelector('.close-feedback').addEventListener('click', () => {
+            feedbackElement.remove();
+        });
         
         document.body.appendChild(feedbackElement);
         
         setTimeout(() => {
-            feedbackElement.classList.add('fade-out');
-            setTimeout(() => feedbackElement.remove(), 500);
-        }, 3000);
+            if (feedbackElement.parentNode) {
+                feedbackElement.classList.add('fade-out');
+                setTimeout(() => feedbackElement.remove(), 300);
+            }
+        }, 5000);
+    }
+
+    // Hash simples para senha
+    function simpleHash(password) {
+        let hash = 0;
+        for (let i = 0; i < password.length; i++) {
+            hash = (hash << 5) - hash + password.charCodeAt(i);
+            hash |= 0;
+        }
+        return hash.toString();
     }
 
     // Inicialização
